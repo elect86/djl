@@ -95,7 +95,7 @@ public class MxParameterStoreTest {
     }
 
     private static NDArray updateHelper(NDArray weight, NDArray grad, int numDevices, float lr) {
-        return weight.add(grad.mul(numDevices).mul(lr));
+        return weight.plus(grad.times(numDevices).times(lr));
     }
 
     private static class TestOptimizer extends Optimizer {
@@ -111,8 +111,8 @@ public class MxParameterStoreTest {
         /** {@inheritDoc} */
         @Override
         public void update(String parameterId, NDArray weight, NDArray grad) {
-            weight.addi(
-                    grad.mul(learningRateTracker.getNewValue(parameterId, 0))
+            weight.plusInP(
+                    grad.times(learningRateTracker.getNewValue(parameterId, 0))
                             .toDevice(weight.getDevice(), false));
             updateCount++;
         }

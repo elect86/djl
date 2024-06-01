@@ -235,8 +235,8 @@ public class TfNDManager extends BaseNDManager {
             opBuilder.addParam("seed2", seed);
         }
         try (NDArray array = opBuilder.buildSingletonOrThrow();
-                NDArray temp = array.mul(high - low)) {
-            return temp.add(low);
+                NDArray temp = array.times(high - low)) {
+            return temp.plus(low);
         } finally {
             axes.close();
         }
@@ -260,8 +260,8 @@ public class TfNDManager extends BaseNDManager {
             opBuilder.addParam("seed2", seed);
         }
         try (NDArray array = opBuilder.buildSingletonOrThrow();
-                NDArray temp = array.mul(scale)) {
-            return temp.add(loc);
+                NDArray temp = array.times(scale)) {
+            return temp.plus(loc);
         } finally {
             axes.close();
         }
@@ -285,8 +285,8 @@ public class TfNDManager extends BaseNDManager {
             opBuilder.addParam("seed2", seed);
         }
         try (NDArray array = opBuilder.buildSingletonOrThrow();
-                NDArray temp = array.mul(scale)) {
-            return temp.add(loc);
+                NDArray temp = array.times(scale)) {
+            return temp.plus(loc);
         } finally {
             axes.close();
         }

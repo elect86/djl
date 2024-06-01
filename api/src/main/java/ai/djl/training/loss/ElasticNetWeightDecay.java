@@ -93,9 +93,9 @@ public class ElasticNetWeightDecay extends Loss {
         NDArray sum1 = manager.create(0.0f);
         NDArray sum2 = manager.create(0.0f);
         for (NDArray wi : parameters) {
-            sum1.addi(l1(wi));
-            sum2.addi(l2(wi));
+            sum1.plusInP(l1(wi));
+            sum2.plusInP(l2(wi));
         }
-        return sum1.muli(lambda1).addi(sum2.muli(lambda2));
+        return sum1.timesInP(lambda1).plusInP(sum2.timesInP(lambda2));
     }
 }

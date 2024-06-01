@@ -70,7 +70,7 @@ public class MxNDManager extends BaseNDManager {
             return (MxNDArray) array;
         }
         MxNDArray ret = create(array.getShape(), array.getDataType());
-        ret.set(array.toByteBuffer());
+        ret.setFrom(array.toByteBuffer());
         ret.setName(array.getName());
         return ret;
     }
@@ -109,9 +109,9 @@ public class MxNDManager extends BaseNDManager {
         SparseFormat fmt = SparseFormat.CSR;
         DataType dataType = DataType.fromBuffer(data);
         MxNDArray indptrNd = create(new Shape(indptr.length), DataType.INT64);
-        indptrNd.set(indptr);
+        indptrNd.setFrom(indptr);
         MxNDArray indicesNd = create(new Shape(indices.length), DataType.INT64);
-        indicesNd.set(indices);
+        indicesNd.setFrom(indices);
         Pointer handle =
                 JnaUtils.createSparseNdArray(
                         fmt,
@@ -123,7 +123,7 @@ public class MxNDManager extends BaseNDManager {
                         false);
         MxNDArray sparse = create(handle, fmt);
         MxNDArray dataNd = create(new Shape(data.remaining()), dataType);
-        dataNd.set(data);
+        dataNd.setFrom(data);
         JnaUtils.ndArraySyncCopyFromNdArray(sparse, dataNd, -1);
         JnaUtils.ndArraySyncCopyFromNdArray(sparse, indptrNd, 0);
         JnaUtils.ndArraySyncCopyFromNdArray(sparse, indicesNd, 1);
@@ -136,7 +136,7 @@ public class MxNDManager extends BaseNDManager {
         SparseFormat fmt = SparseFormat.ROW_SPARSE;
         DataType dataType = DataType.fromBuffer(data);
         MxNDArray indicesNd = create(new Shape(indices.length), DataType.INT64);
-        indicesNd.set(indices);
+        indicesNd.setFrom(indices);
         Pointer handle =
                 JnaUtils.createSparseNdArray(
                         fmt,
@@ -148,7 +148,7 @@ public class MxNDManager extends BaseNDManager {
                         false);
         MxNDArray sparse = create(handle, fmt);
         MxNDArray dataNd = create(dataShape, dataType);
-        dataNd.set(data);
+        dataNd.setFrom(data);
         JnaUtils.ndArraySyncCopyFromNdArray(sparse, dataNd, -1);
         JnaUtils.ndArraySyncCopyFromNdArray(sparse, indicesNd, 0);
         return sparse;

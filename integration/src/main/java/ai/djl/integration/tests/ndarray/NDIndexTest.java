@@ -298,7 +298,7 @@ public class NDIndexTest {
             original = manager.arange(6).reshape(3, 2);
             expected = manager.create(new int[] {6, 8, 10});
             index = new NDIndex("... , 1");
-            original.set(index, nd -> nd.add(5));
+            original.set(index, nd -> nd.plus(5));
             Assert.assertEquals(original.get(index), expected);
         }
     }
@@ -307,7 +307,7 @@ public class NDIndexTest {
     public void testSetByFunctionIncrements() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray original = manager.ones(new Shape(1, 5));
-            original.set(new NDIndex(":, 0::2"), array -> array.mul(-1).add(1));
+            original.set(new NDIndex(":, 0::2"), array -> array.mul(-1).plus(1));
             NDArray expected = manager.create(new float[][] {{0, 1, 0, 1, 0}});
             Assert.assertEquals(original, expected);
         }

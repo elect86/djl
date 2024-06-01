@@ -46,7 +46,7 @@ public class MinMaxScaler implements AutoCloseable {
     public MinMaxScaler fit(NDArray data, int[] axises) {
         fittedMin = data.min(axises);
         fittedMax = data.max(axises);
-        fittedRange = fittedMax.sub(fittedMin);
+        fittedRange = fittedMax.minus(fittedMin);
         if (detached) {
             detach();
         }
@@ -82,7 +82,7 @@ public class MinMaxScaler implements AutoCloseable {
         if (fittedRange == null) {
             fit(data, new int[] {0});
         }
-        NDArray std = data.sub(fittedMin).divi(fittedRange);
+        NDArray std = data.minus(fittedMin).divInP(fittedRange);
         return scale(std);
     }
 
@@ -101,7 +101,7 @@ public class MinMaxScaler implements AutoCloseable {
         if (fittedRange == null) {
             fit(data, new int[] {0});
         }
-        NDArray std = data.subi(fittedMin).divi(fittedRange);
+        NDArray std = data.minusInP(fittedMin).divInP(fittedRange);
         return scale(std);
     }
 
@@ -116,7 +116,7 @@ public class MinMaxScaler implements AutoCloseable {
     private NDArray scale(NDArray std) {
         // we don't have to scale by custom range when range is default 0..1
         if (maxRange != 1f || minRange != 0f) {
-            return std.muli(maxRange - minRange).addi(minRange);
+            return std.timesInP(maxRange - minRange).plusInP(minRange);
         }
         return std;
     }
@@ -131,7 +131,7 @@ public class MinMaxScaler implements AutoCloseable {
     private NDArray inverseScale(NDArray std) {
         // we don't have to scale by custom range when range is default 0..1
         if (maxRange != 1f || minRange != 0f) {
-            return std.sub(minRange).divi(maxRange - minRange);
+            return std.minus(minRange).divInP(maxRange - minRange);
         }
         return std.duplicate();
     }
@@ -148,7 +148,7 @@ public class MinMaxScaler implements AutoCloseable {
     private NDArray inverseScalei(NDArray std) {
         // we don't have to scale by custom range when range is default 0..1
         if (maxRange != 1f || minRange != 0f) {
-            return std.subi(minRange).divi(maxRange - minRange);
+            return std.minusInP(minRange).divInP(maxRange - minRange);
         }
         return std;
     }
@@ -162,7 +162,7 @@ public class MinMaxScaler implements AutoCloseable {
     public NDArray inverseTransform(NDArray data) {
         throwsIllegalStateWhenNotFitted();
         NDArray result = inverseScale(data);
-        return result.muli(fittedRange).addi(fittedMin);
+        return result.timesInP(fittedRange).plusInP(fittedMin);
     }
 
     /**
@@ -174,7 +174,7 @@ public class MinMaxScaler implements AutoCloseable {
     public NDArray inverseTransformi(NDArray data) {
         throwsIllegalStateWhenNotFitted();
         NDArray result = inverseScalei(data);
-        return result.muli(fittedRange).addi(fittedMin);
+        return result.timesInP(fittedRange).plusInP(fittedMin);
     }
 
     /**

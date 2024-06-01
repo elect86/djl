@@ -32,9 +32,9 @@ public class ImageDecoder implements NoBatchifyTranslator<NDArray, Image> {
     /** {@inheritDoc} */
     @Override
     public Image processOutput(TranslatorContext ctx, NDList output) throws Exception {
-        NDArray scaled = output.get(0).div(2).add(0.5).clip(0, 1);
+        NDArray scaled = output.get(0).div(2).plus(0.5).clip(0, 1);
         scaled = scaled.transpose(0, 2, 3, 1);
-        scaled = scaled.mul(255).round().toType(DataType.INT8, true).get(0);
+        scaled = scaled.times(255).round().toType(DataType.INT8, true).get(0);
         return ImageFactory.getInstance().fromNDArray(scaled);
     }
 }

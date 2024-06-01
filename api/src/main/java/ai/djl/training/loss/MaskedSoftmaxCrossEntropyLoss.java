@@ -83,14 +83,14 @@ public class MaskedSoftmaxCrossEntropyLoss extends Loss {
                     new NDIndex()
                             .addAllDim(Math.floorMod(classAxis, pred.getShape().dimension()))
                             .addPickDim(lab);
-            loss = pred.get(pickIndex).neg();
+            loss = pred.get(pickIndex).unaryMinus();
         } else {
             lab = lab.reshape(pred.getShape());
-            loss = pred.mul(lab).neg().sum(new int[] {classAxis}, true);
+            loss = pred.times(lab).unaryMinus().sum(new int[] {classAxis}, true);
         }
-        loss = loss.mul(weights);
+        loss = loss.times(weights);
         if (weight != 1) {
-            loss = loss.mul(weight);
+            loss = loss.times(weight);
         }
         return loss.mean(new int[] {1});
     }

@@ -197,7 +197,7 @@ public final class TransferFreshFruit {
             int classAxis = -1;
             NDArray pred = predictions.singletonOrThrow().log();
             NDArray lab = labels.singletonOrThrow().reshape(pred.getShape());
-            NDArray loss = pred.mul(lab).neg().sum(new int[] {classAxis}, true);
+            NDArray loss = pred.times(lab).unaryMinus().sum(new int[] {classAxis}, true);
             return loss.mean();
         }
     }

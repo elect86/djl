@@ -128,7 +128,7 @@ public class TrtSession extends AbstractBlock implements AutoCloseable {
                                     + ", expected: "
                                     + bound.getShape());
                 }
-                bound.set(array.toByteBuffer());
+                bound.setFrom(array.toByteBuffer());
             }
         }
         JniUtils.runTrtModel(session);

@@ -30,7 +30,7 @@ public class NDFormatTest {
         try (NDManager manager = NDManager.newBaseManager(Device.cpu())) {
             byte[] data = {Byte.MAX_VALUE, Byte.MIN_VALUE, 1};
             NDArray array = manager.create(new Shape(3), DataType.UINT8);
-            array.set(data);
+            array.setFrom(data);
 
             String str = NDFormat.format(array, 100, 10, 10, 20);
             Assert.assertEquals(str, "ND: (3) cpu() uint8" + LF + "[0x7F, 0x80, 0x01]" + LF);

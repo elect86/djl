@@ -568,8 +568,8 @@ public class TextGenerator {
                         .expandDims(0)
                         .repeat(0, inputIds.getShape().get(0));
 
-        NDArray positionIdsShifted = positionIds.subi(positionOffset.repeat(0, repeat));
-        positionIds = positionIdsShifted.maximum(positionIdsShifted.zerosLike());
+        NDArray positionIdsShifted = positionIds.minusInP(positionOffset.repeat(0, repeat));
+        positionIds = positionIdsShifted.max(positionIdsShifted.zerosLike());
 
         return new NDList(inputIds, positionIds, attentionMask);
     }

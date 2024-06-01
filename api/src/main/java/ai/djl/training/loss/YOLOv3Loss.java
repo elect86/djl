@@ -75,8 +75,8 @@ public final class YOLOv3Loss extends Loss {
      * @return a NDArray where values are set between tMin and tMax
      */
     public NDArray clipByTensor(NDArray tList, float tMin, float tMax) {
-        NDArray result = tList.gte(tMin).mul(tList).add(tList.lt(tMin).mul(tMin));
-        result = result.lte(tMax).mul(result).add(result.gt(tMax).mul(tMax));
+        NDArray result = tList.gte(tMin).times(tList).plus(tList.lt(tMin).times(tMin));
+        result = result.lte(tMax).times(result).plus(result.gt(tMax).times(tMax));
         return result;
     }
 
@@ -88,7 +88,7 @@ public final class YOLOv3Loss extends Loss {
      * @return the MSELoss between prediction and target
      */
     public NDArray mseLoss(NDArray prediction, NDArray target) {
-        return prediction.sub(target).pow(2);
+        return prediction.minus(target).pow(2);
     }
 
     /**
@@ -102,9 +102,9 @@ public final class YOLOv3Loss extends Loss {
         prediction = clipByTensor(prediction, EPSILON, (float) (1.0 - EPSILON));
         return prediction
                 .log()
-                .mul(target)
-                .add(prediction.mul(-1).add(1).log().mul(target.mul(-1).add(1)))
-                .mul(-1);
+                .times(target)
+                .plus(prediction.times(-1).plus(1).log().times(target.times(-1).plus(1)))
+                .times(-1);
     }
 
     /** {@inheritDoc} */
@@ -212,14 +212,14 @@ public final class YOLOv3Loss extends Loss {
 
         // three loss parts: box Loss, confidence Loss, and class Loss
         NDArray boxLoss =
-                objMask.mul(boxLossScale)
-                        .mul(
+                objMask.times(boxLossScale)
+                        .times(
                                 NDArrays.add(
-                                                xTrue.sub(x).pow(2),
-                                                yTrue.sub(y).pow(2),
-                                                wTrue.sub(
+                                                xTrue.minus(x).pow(2),
+                                                yTrue.minus(y).pow(2),
+                                                wTrue.minus(
                                                                 w.exp()
-                                                                        .mul(
+                                                                        .times(
                                                                                 widths.broadcast(
                                                                                                 inH,
                                                                                                 inW,
@@ -231,9 +231,9 @@ public final class YOLOv3Loss extends Loss {
                                                                                                 1,
                                                                                                 0)))
                                                         .pow(2),
-                                                hTrue.sub(
+                                                hTrue.minus(
                                                                 h.exp()
-                                                                        .mul(
+                                                                        .times(
                                                                                 heights.broadcast(
                                                                                                 inH,
                                                                                                 inW,
@@ -249,16 +249,16 @@ public final class YOLOv3Loss extends Loss {
                         .sum();
 
         NDArray confLoss =
-                objMask.mul(
-                                conf.add(EPSILON)
+                objMask.times(
+                                conf.plus(EPSILON)
                                         .log()
-                                        .mul(-1)
-                                        .add(bceLoss(predClass, classTrue).sum(new int[] {4})))
+                                        .times(-1)
+                                        .plus(bceLoss(predClass, classTrue).sum(new int[] {4})))
                         .sum();
 
-        NDArray noObjLoss = noObjMask.mul(conf.mul(-1).add(1 + EPSILON).log().mul(-1)).sum();
+        NDArray noObjLoss = noObjMask.times(conf.times(-1).plus(1 + EPSILON).log().times(-1)).sum();
 
-        return boxLoss.add(confLoss).add(noObjLoss).div(batchSize);
+        return boxLoss.plus(confLoss).plus(noObjLoss).div(batchSize);
     }
 
     /**
@@ -290,10 +290,10 @@ public final class YOLOv3Loss extends Loss {
 
             NDArray picture = labels.get(batch);
             // the shape should be (objectNums,5)
-            NDArray xgt = picture.get("...,1").add(picture.get("...,3").div(2)).mul(inW);
+            NDArray xgt = picture.get("...,1").plus(picture.get("...,3").div(2)).times(inW);
             // Center of x should be X value in labels and add half of the width and multiplies the
             // input width to get which grid cell it's in
-            NDArray ygt = picture.get("...,2").add(picture.get("...,4").div(2)).mul(inH);
+            NDArray ygt = picture.get("...,2").plus(picture.get("...,4").div(2)).times(inH);
             // Center of y is the same as well
             NDArray wgt = picture.get("...,3");
             // the width of the ground truth box
@@ -364,31 +364,31 @@ public final class YOLOv3Loss extends Loss {
             NDArray curPredy = predy.get(i);
             float width = anchors[componentIndex * 6 + 2 * i] / strideW;
             float height = anchors[componentIndex * 6 + 2 * i + 1] / strideH;
-            NDArray predLeft = curPredx.sub(width / 2);
-            NDArray predRight = curPredx.add(width / 2);
-            NDArray predTop = curPredy.sub(height / 2);
-            NDArray predBottom = curPredy.add(height / 2);
+            NDArray predLeft = curPredx.minus(width / 2);
+            NDArray predRight = curPredx.plus(width / 2);
+            NDArray predTop = curPredy.minus(height / 2);
+            NDArray predBottom = curPredy.plus(height / 2);
 
             NDArray truth = groundTruth.get(i);
 
-            NDArray trueLeft = truth.get("...,0").sub(truth.get("...,2").mul(inW).div(2));
-            NDArray trueRight = truth.get("...,0").add(truth.get("...,2").mul(inW).div(2));
-            NDArray trueTop = truth.get("...,1").sub(truth.get("...,3").mul(inH).div(2));
-            NDArray trueBottom = truth.get("...,1").add(truth.get("...,3").mul(inH).div(2));
+            NDArray trueLeft = truth.get("...,0").minus(truth.get("...,2").times(inW).div(2));
+            NDArray trueRight = truth.get("...,0").plus(truth.get("...,2").times(inW).div(2));
+            NDArray trueTop = truth.get("...,1").minus(truth.get("...,3").times(inH).div(2));
+            NDArray trueBottom = truth.get("...,1").plus(truth.get("...,3").times(inH).div(2));
 
             NDArray left = NDArrays.maximum(predLeft, trueLeft);
             NDArray right = NDArrays.minimum(predRight, trueRight);
             NDArray top = NDArrays.maximum(predTop, trueTop);
             NDArray bottom = NDArrays.minimum(predBottom, trueBottom);
 
-            NDArray inter = right.sub(left).mul(bottom.sub(top));
+            NDArray inter = right.minus(left).times(bottom.minus(top));
             NDArray union =
                     truth.get("...,2")
-                            .mul(inW)
-                            .mul(truth.get("...,3").mul(inH))
-                            .add(width * height)
-                            .sub(inter)
-                            .add(EPSILON); // should not be divided by zero
+                            .times(inW)
+                            .times(truth.get("...,3").times(inH))
+                            .plus(width * height)
+                            .minus(inter)
+                            .plus(EPSILON); // should not be divided by zero
 
             iouComponent.add(inter.div(union));
         }

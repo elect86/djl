@@ -41,7 +41,7 @@ public class LocalParameterServer implements ParameterServer {
         // reduce gradient from all devices to first device
         for (int i = 1; i < grads.length; i++) {
             try (NDArray gradCopy = grads[i].toDevice(firstDevice, true)) {
-                grads[0].addi(gradCopy);
+                grads[0].plusInP(gradCopy);
             }
         }
         // update weights on different devices with reduced gradient

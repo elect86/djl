@@ -63,10 +63,10 @@ public class QuantileL1Loss extends Loss {
         NDArray pred = predictions.singletonOrThrow();
         NDArray labelReshaped = labels.singletonOrThrow().reshape(pred.getShape());
         NDArray loss =
-                pred.sub(labelReshaped)
-                        .mul(labelReshaped.lte(pred).toType(DataType.FLOAT32, false).sub(quantile))
+                pred.minus(labelReshaped)
+                        .times(labelReshaped.lte(pred).toType(DataType.FLOAT32, false).minus(quantile))
                         .abs()
-                        .mul(2);
+                        .times(2);
         return loss.mean();
     }
 }

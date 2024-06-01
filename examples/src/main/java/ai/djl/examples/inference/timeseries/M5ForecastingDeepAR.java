@@ -303,27 +303,27 @@ public final class M5ForecastingDeepAR {
             NDArray meanFcst = forecast.mean();
             NDArray medianFcst = forecast.median();
 
-            NDArray meanSquare = gtTarget.sub(meanFcst).square().mean();
-            NDArray scaleDenom = gtTarget.get("1:").sub(gtTarget.get(":-1")).square().mean();
+            NDArray meanSquare = gtTarget.minus(meanFcst).square().mean();
+            NDArray scaleDenom = gtTarget.get("1:").minus(gtTarget.get(":-1")).square().mean();
 
             NDArray rmsse = meanSquare.div(scaleDenom).sqrt();
             rmsse = NDArrays.where(scaleDenom.eq(0), rmsse.onesLike(), rmsse);
 
             retMetrics.put("RMSSE", rmsse.getFloat());
 
-            retMetrics.put("MSE", gtTarget.sub(meanFcst).square().mean().getFloat());
-            retMetrics.put("abs_error", gtTarget.sub(medianFcst).abs().sum().getFloat());
+            retMetrics.put("MSE", gtTarget.minus(meanFcst).square().mean().getFloat());
+            retMetrics.put("abs_error", gtTarget.minus(medianFcst).abs().sum().getFloat());
             retMetrics.put("abs_target_sum", gtTarget.abs().sum().getFloat());
             retMetrics.put("abs_target_mean", gtTarget.abs().mean().getFloat());
             retMetrics.put(
-                    "MAPE", gtTarget.sub(medianFcst).abs().div(gtTarget.abs()).mean().getFloat());
+                    "MAPE", gtTarget.minus(medianFcst).abs().div(gtTarget.abs()).mean().getFloat());
             retMetrics.put(
                     "sMAPE",
-                    gtTarget.sub(medianFcst)
+                    gtTarget.minus(medianFcst)
                             .abs()
-                            .div(gtTarget.abs().add(medianFcst.abs()))
+                            .div(gtTarget.abs().plus(medianFcst.abs()))
                             .mean()
-                            .mul(2)
+                            .times(2)
                             .getFloat());
             retMetrics.put("ND", retMetrics.get("abs_error") / retMetrics.get("abs_target_sum"));
 

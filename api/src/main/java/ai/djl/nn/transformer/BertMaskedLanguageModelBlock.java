@@ -88,12 +88,12 @@ public class BertMaskedLanguageModelBlock extends AbstractBlock {
                 indices.getManager()
                         .newSubManager(indices.getDevice())
                         .arange(0, batchSize) // [0, 1, 2, ..., batchSize - 1]
-                        .mul(sequenceLength) // [0, 16, 32, ...]
+                        .times(sequenceLength) // [0, 16, 32, ...]
                         .reshape(batchSize, 1); // [[0], [16], [32], ...]
         // The following adds the sequence offsets to every index for every sequence.
         // This works, because the single values in the sequence offsets are propagated
         NDArray absoluteIndices =
-                indices.add(sequenceOffsets).reshape(1, (long) batchSize * indicesPerSequence);
+                indices.plus(sequenceOffsets).reshape(1, (long) batchSize * indicesPerSequence);
         // Now we create one long sequence by appending all sequences
         NDArray flattenedSequences = sequences.reshape((long) batchSize * sequenceLength, width);
         // We use the absolute indices to gather the elements of the flattened sequences
@@ -134,7 +134,7 @@ public class BertMaskedLanguageModelBlock extends AbstractBlock {
             NDArray logits = normalizedTokens.dot(embeddingTransposed); // (B * I, D)
             // we add an offset for each dictionary entry
             NDArray logitsWithBias =
-                    logits.add(
+                    logits.plus(
                             ps.getValue(
                                     dictionaryBias, logits.getDevice(), training)); // (B * I, D)
             // now we apply log Softmax to get proper log probabilities

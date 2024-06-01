@@ -66,16 +66,16 @@ public class SigmoidBinaryCrossEntropyLoss extends Loss {
             // TODO: Add Position weight option
             loss =
                     Activation.relu(pred)
-                            .sub(pred.mul(lab))
-                            .add(Activation.softPlus(pred.abs().neg()));
+                            .minus(pred.times(lab))
+                            .plus(Activation.softPlus(pred.abs().unaryMinus()));
         } else {
             loss =
                     epsLog(pred)
-                            .mul(lab)
-                            .add(epsLog(NDArrays.sub(1., pred)).mul(NDArrays.sub(1., lab)));
+                            .times(lab)
+                            .plus(epsLog(NDArrays.sub(1., pred)).times(NDArrays.sub(1., lab)));
         }
         if (weight != 1f) {
-            loss = loss.mul(weight);
+            loss = loss.times(weight);
         }
         return loss.mean();
     }
@@ -88,6 +88,6 @@ public class SigmoidBinaryCrossEntropyLoss extends Loss {
      */
     private NDArray epsLog(NDArray a) {
         double eps = 1e-12;
-        return a.add(eps).log();
+        return a.plus(eps).log();
     }
 }

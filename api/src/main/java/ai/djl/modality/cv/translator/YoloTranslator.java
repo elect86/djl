@@ -51,8 +51,8 @@ public class YoloTranslator extends ObjectDetectionTranslator {
 
         float[] boxX = xMin.toFloatArray();
         float[] boxY = yMin.toFloatArray();
-        float[] boxWidth = xMax.sub(xMin).toFloatArray();
-        float[] boxHeight = yMax.sub(yMin).toFloatArray();
+        float[] boxWidth = xMax.minus(xMin).toFloatArray();
+        float[] boxHeight = yMax.minus(yMin).toFloatArray();
 
         List<String> retClasses = new ArrayList<>(detected);
         List<Double> retProbs = new ArrayList<>(detected);

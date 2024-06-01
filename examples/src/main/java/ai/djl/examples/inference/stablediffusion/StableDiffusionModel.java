@@ -142,9 +142,9 @@ public class StableDiffusionModel {
                 NDList splitNoisePred = noisePred.split(2);
                 NDArray noisePredText = splitNoisePred.get(0);
                 NDArray noisePredUncond = splitNoisePred.get(1);
-                NDArray scaledNoisePredUncond = noisePredText.add(noisePredUncond.neg());
-                scaledNoisePredUncond = scaledNoisePredUncond.mul(GUIDANCE_SCALE);
-                noisePred = noisePredUncond.add(scaledNoisePredUncond);
+                NDArray scaledNoisePredUncond = noisePredText.plus(noisePredUncond.unaryMinus());
+                scaledNoisePredUncond = scaledNoisePredUncond.times(GUIDANCE_SCALE);
+                noisePred = noisePredUncond.plus(scaledNoisePredUncond);
                 latent = scheduler.step(noisePred, (int) t, latent);
                 pb.increment(1);
             }

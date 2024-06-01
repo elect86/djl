@@ -172,11 +172,11 @@ public interface NDArrayEx {
     NDArray gelu();
 
     default NDArray swish(float beta) {
-        return Activation.sigmoid(getArray().mul(beta)).mul(getArray());
+        return Activation.sigmoid(getArray().times(beta)).times(getArray());
     }
 
     default NDArray mish() {
-        return getArray().exp().add(1).log2().tanh().mul(getArray());
+        return getArray().exp().plus(1).log2().tanh().times(getArray());
     }
 
     ////////////////////////////////////////
@@ -419,7 +419,7 @@ public interface NDArrayEx {
         Shape shape = (dim == 3) ? new Shape(3, 1, 1) : new Shape(1, 3, 1, 1);
         try (NDArray meanArr = manager.create(mean, shape);
                 NDArray stdArr = manager.create(std, shape)) {
-            return getArray().sub(meanArr).divi(stdArr);
+            return getArray().minus(meanArr).divInP(stdArr);
         }
     }
 

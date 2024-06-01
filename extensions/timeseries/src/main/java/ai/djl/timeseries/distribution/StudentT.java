@@ -39,16 +39,16 @@ public class StudentT extends Distribution {
     /** {@inheritDoc} */
     @Override
     public NDArray logProb(NDArray target) {
-        NDArray nup1Half = nu.add(1.).div(2.);
-        NDArray part1 = nu.getNDArrayInternal().rdiv(1.).mul(target.sub(mu).div(sigma).square());
+        NDArray nup1Half = nu.plus(1.).div(2.);
+        NDArray part1 = nu.getNDArrayInternal().rdiv(1.).times(target.minus(mu).div(sigma).square());
 
         NDArray z =
                 nup1Half.gammaln()
-                        .sub(nu.div(2.).gammaln())
-                        .sub(nu.mul(Math.PI).log().mul(0.5))
-                        .sub(sigma.log());
+                        .minus(nu.div(2.).gammaln())
+                        .minus(nu.times(Math.PI).log().times(0.5))
+                        .minus(sigma.log());
 
-        return z.sub(nup1Half.mul(part1.add(1.).log()));
+        return z.minus(nup1Half.times(part1.plus(1.).log()));
     }
 
     /** {@inheritDoc} */
@@ -62,7 +62,7 @@ public class StudentT extends Distribution {
         NDArray gammas =
                 manager.sampleGamma(
                         expandedNu.div(2.),
-                        expandedNu.mul(expandedSigma.square()).getNDArrayInternal().rdiv(2.));
+                        expandedNu.times(expandedSigma.square()).getNDArrayInternal().rdiv(2.));
         return manager.sampleNormal(expandedMu, gammas.sqrt().getNDArrayInternal().rdiv(1.));
     }
 

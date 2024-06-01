@@ -195,7 +195,7 @@ public final class TrainSentimentAnalysis {
                                         .addPad(
                                                 0,
                                                 0,
-                                                (m) -> m.ones(new Shape(1)).mul(paddingTokenValue))
+                                                (m) -> m.ones(new Shape(1)).times(paddingTokenValue))
                                         .build())
                         .setSourceConfiguration(
                                 new TextData.Configuration().setTextProcessors(TEXT_PROCESSORS))
@@ -238,7 +238,7 @@ public final class TrainSentimentAnalysis {
         public Batchifier getBatchifier() {
             return PaddingStackBatchifier.builder()
                     .optIncludeValidLengths(false)
-                    .addPad(0, 0, m -> m.ones(new Shape(1)).mul(paddingTokenValue))
+                    .addPad(0, 0, m -> m.ones(new Shape(1)).times(paddingTokenValue))
                     .build();
         }
     }

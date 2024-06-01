@@ -113,25 +113,25 @@ class MxNDArrayEx implements NDArrayEx {
     /** {@inheritDoc} */
     @Override
     public NDArray rsub(Number n) {
-        return array.sub(n).neg();
+        return array.minus(n).unaryMinus();
     }
 
     /** {@inheritDoc} */
     @Override
     public NDArray rsub(NDArray b) {
-        return array.sub(b).neg();
+        return array.minus(b).unaryMinus();
     }
 
     /** {@inheritDoc} */
     @Override
     public NDArray rsubi(Number n) {
-        return array.subi(n).negi();
+        return array.minusInP(n).unaryMinusInP();
     }
 
     /** {@inheritDoc} */
     @Override
     public NDArray rsubi(NDArray b) {
-        return array.subi(b).negi();
+        return array.minusInP(b).unaryMinusInP();
     }
 
     /** {@inheritDoc} */
@@ -145,7 +145,7 @@ class MxNDArrayEx implements NDArrayEx {
     /** {@inheritDoc} */
     @Override
     public NDArray rmod(NDArray b) {
-        return b.mod(array);
+        return b.rem(array);
     }
 
     /** {@inheritDoc} */
@@ -383,19 +383,19 @@ class MxNDArrayEx implements NDArrayEx {
             subManager.tempAttachAll(inputs, weights);
 
             // Preprocess Gradient
-            grad.muli(rescaleGrad);
+            grad.timesInP(rescaleGrad);
             if (clipGrad > 0) {
                 grad = grad.clip(-clipGrad, clipGrad);
             }
-            grad.addi(weight.mul(weightDecay));
+            grad.plusInP(weight.times(weightDecay));
 
             // Update s, g, and delta
-            s.muli(rho).addi(grad.square().mul(1 - rho));
-            NDArray g = delta.add(epsilon).sqrt().div(s.add(epsilon).sqrt()).mul(grad);
-            delta.muli(rho).addi(g.square().mul(1 - rho));
+            s.timesInP(rho).plusInP(grad.square().times(1 - rho));
+            NDArray g = delta.plus(epsilon).sqrt().div(s.plus(epsilon).sqrt()).times(grad);
+            delta.timesInP(rho).plusInP(g.square().times(1 - rho));
 
             // Update weight
-            weight.subi(g);
+            weight.minusInP(g);
         }
     }
 

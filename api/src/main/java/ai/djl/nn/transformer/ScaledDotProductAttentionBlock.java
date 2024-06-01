@@ -254,10 +254,10 @@ public final class ScaledDotProductAttentionBlock extends AbstractBlock {
         NDArray valueHeads = createAttentionHeadsFromEmbeddings(values.head(), B, F, N, H);
         // Apply attention by multiplying the key and query vectors: (B, N, T, F)
         // (For each entry in the sequence there is a weight for each other head in the sequence)
-        NDArray attentionScores = queryHeads.matMul(keyHeads.transpose(0, 1, 3, 2));
+        NDArray attentionScores = queryHeads.matTimes(keyHeads.transpose(0, 1, 3, 2));
         // Normalize the scores with 1/sqrt(H)
         NDArray normalizedAttentionScores =
-                attentionScores.mul(attentionScores.getManager().create(1f / (float) Math.sqrt(H)));
+                attentionScores.times(attentionScores.getManager().create(1f / (float) Math.sqrt(H)));
         // Apply masking if requested, mask has shape (B, T, F)
         if (attentionMask != null) {
             NDArray maskOffset;
@@ -276,12 +276,12 @@ public final class ScaledDotProductAttentionBlock extends AbstractBlock {
                 maskOffset =
                         expandedMask
                                 .toType(DataType.FLOAT32, false)
-                                .mul(expandedMask.getManager().create(-1f)) // turn 1 into -1
-                                .add(
+                                .times(expandedMask.getManager().create(-1f)) // turn 1 into -1
+                                .plus(
                                         expandedMask
                                                 .getManager()
                                                 .create(1f)) // turn 0s to 1s, -1s to 0s
-                                .mul(
+                                .times(
                                         expandedMask
                                                 .getManager()
                                                 .create(-100000f)); // turn 1s (original 0s) into
@@ -290,7 +290,7 @@ public final class ScaledDotProductAttentionBlock extends AbstractBlock {
                 maskOffset = attentionMask;
             }
             // adding the mask to the scores removes the scores of unwanted positions
-            normalizedAttentionScores = normalizedAttentionScores.add(maskOffset);
+            normalizedAttentionScores = normalizedAttentionScores.plus(maskOffset);
         }
         // Then apply softmax to get a probability distribution, shape (B, N, T, F)
         NDArray attentionProbs = normalizedAttentionScores.softmax(3);
@@ -302,7 +302,7 @@ public final class ScaledDotProductAttentionBlock extends AbstractBlock {
                         .singletonOrThrow();
         // The result of the attention mechanism is created by a weighted sum using the attention
         // probs. The new head is the weighted sum of the value heads. (B, N, T, H)
-        NDArray attentionResult = attentionProbsAfterDropout.matMul(valueHeads);
+        NDArray attentionResult = attentionProbsAfterDropout.matTimes(valueHeads);
         // Finally, the heads are reshaped and concatenated into an embedding again
         NDArray resultEmbeddings =
                 attentionResult // (B, N, T, H)

@@ -594,7 +594,7 @@ public final class NDArrays {
      * @return the maximum of a {@link NDArray} and a number element-wise
      */
     public static NDArray maximum(NDArray a, Number n) {
-        return a.maximum(n);
+        return a.max(n);
     }
 
     /**
@@ -644,7 +644,7 @@ public final class NDArrays {
      * @return the maximum of {@link NDArray} a and {@link NDArray} b element-wise
      */
     public static NDArray maximum(NDArray a, NDArray b) {
-        return a.maximum(b);
+        return a.max(b);
     }
 
     /**
@@ -664,7 +664,7 @@ public final class NDArrays {
      * @return the minimum of a {@link NDArray} and a number element-wise
      */
     public static NDArray minimum(NDArray a, Number n) {
-        return a.minimum(n);
+        return a.min(n);
     }
 
     /**
@@ -714,7 +714,7 @@ public final class NDArrays {
      * @return the minimum of {@link NDArray} a and {@link NDArray} b element-wise
      */
     public static NDArray minimum(NDArray a, NDArray b) {
-        return a.minimum(b);
+        return a.min(b);
     }
 
     /**
@@ -809,7 +809,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray add(NDArray a, Number n) {
-        return a.add(n);
+        return a.plus(n);
     }
 
     /**
@@ -829,7 +829,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray add(Number n, NDArray a) {
-        return a.add(n);
+        return a.plus(n);
     }
 
     /**
@@ -854,7 +854,7 @@ public final class NDArrays {
     public static NDArray add(NDArray... arrays) {
         checkInputs(arrays);
         if (arrays.length == 2) {
-            return arrays[0].add(arrays[1]);
+            return arrays[0].plus(arrays[1]);
         }
         try (NDArray array = NDArrays.stack(new NDList(arrays))) {
             return array.sum(new int[] {0});
@@ -878,7 +878,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray sub(NDArray a, Number n) {
-        return a.sub(n);
+        return a.minus(n);
     }
 
     /**
@@ -924,7 +924,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray sub(NDArray a, NDArray b) {
-        return a.sub(b);
+        return a.minus(b);
     }
 
     /**
@@ -944,7 +944,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray mul(NDArray a, Number n) {
-        return a.mul(n);
+        return a.times(n);
     }
 
     /**
@@ -964,7 +964,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray mul(Number n, NDArray a) {
-        return a.mul(n);
+        return a.times(n);
     }
 
     /**
@@ -989,7 +989,7 @@ public final class NDArrays {
     public static NDArray mul(NDArray... arrays) {
         checkInputs(arrays);
         if (arrays.length == 2) {
-            return arrays[0].mul(arrays[1]);
+            return arrays[0].times(arrays[1]);
         }
         try (NDArray array = NDArrays.stack(new NDList(arrays))) {
             return array.prod(new int[] {0});
@@ -1079,7 +1079,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray mod(NDArray a, Number n) {
-        return a.mod(n);
+        return a.rem(n);
     }
 
     /**
@@ -1120,7 +1120,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray mod(NDArray a, NDArray b) {
-        return a.mod(b);
+        return a.rem(b);
     }
 
     /**
@@ -1209,7 +1209,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray addi(NDArray a, Number n) {
-        return a.addi(n);
+        return a.plusInP(n);
     }
 
     /**
@@ -1232,7 +1232,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray addi(Number n, NDArray a) {
-        return a.addi(n);
+        return a.plusInP(n);
     }
 
     /**
@@ -1260,7 +1260,7 @@ public final class NDArrays {
      */
     public static NDArray addi(NDArray... arrays) {
         checkInputs(arrays);
-        Arrays.stream(arrays).skip(1).forEachOrdered(array -> arrays[0].addi(array));
+        Arrays.stream(arrays).skip(1).forEachOrdered(array -> arrays[0].plusInP(array));
         return arrays[0];
     }
 
@@ -1284,7 +1284,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray subi(NDArray a, Number n) {
-        return a.subi(n);
+        return a.minusInP(n);
     }
 
     /**
@@ -1338,7 +1338,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray subi(NDArray a, NDArray b) {
-        return a.subi(b);
+        return a.minusInP(b);
     }
 
     /**
@@ -1361,7 +1361,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray muli(NDArray a, Number n) {
-        return a.muli(n);
+        return a.timesInP(n);
     }
 
     /**
@@ -1384,7 +1384,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray muli(Number n, NDArray a) {
-        return a.muli(n);
+        return a.timesInP(n);
     }
 
     /**
@@ -1412,7 +1412,7 @@ public final class NDArrays {
      */
     public static NDArray muli(NDArray... arrays) {
         checkInputs(arrays);
-        Arrays.stream(arrays).skip(1).forEachOrdered(array -> arrays[0].muli(array));
+        Arrays.stream(arrays).skip(1).forEachOrdered(array -> arrays[0].timesInP(array));
         return arrays[0];
     }
 
@@ -1436,7 +1436,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray divi(NDArray a, Number n) {
-        return a.divi(n);
+        return a.divInP(n);
     }
 
     /**
@@ -1490,7 +1490,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray divi(NDArray a, NDArray b) {
-        return a.divi(b);
+        return a.divInP(b);
     }
 
     /**
@@ -1513,7 +1513,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray modi(NDArray a, Number n) {
-        return a.modi(n);
+        return a.remInP(n);
     }
 
     /**
@@ -1560,7 +1560,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray modi(NDArray a, NDArray b) {
-        return a.modi(b);
+        return a.remInP(b);
     }
 
     /**
@@ -1583,7 +1583,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray powi(NDArray a, Number n) {
-        return a.powi(n);
+        return a.powInP(n);
     }
 
     /**
@@ -1638,7 +1638,7 @@ public final class NDArrays {
      * @return the result {@link NDArray}
      */
     public static NDArray powi(NDArray a, NDArray b) {
-        return a.powi(b);
+        return a.powInP(b);
     }
 
     /**
@@ -1756,7 +1756,7 @@ public final class NDArrays {
      * @return the result {@code NDArray}
      */
     public static NDArray matMul(NDArray a, NDArray b) {
-        return a.matMul(b);
+        return a.matTimes(b);
     }
 
     /**

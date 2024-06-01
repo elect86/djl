@@ -95,8 +95,8 @@ public class SparseMax extends AbstractBlock {
                                 .toArray(NDArray[]::new));
 
         NDArray expSum =
-                input.exp().mul(maskTopK).sum(new int[] {-1}, true).broadcast(input.getShape());
-        NDArray output = input.exp().mul(maskTopK).div(expSum);
+                input.exp().times(maskTopK).sum(new int[] {-1}, true).broadcast(input.getShape());
+        NDArray output = input.exp().times(maskTopK).div(expSum);
 
         if (axis != -1) {
             output = output.swapAxes(axis, -1);

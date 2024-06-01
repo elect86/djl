@@ -49,9 +49,9 @@ public class BertNextSentenceLoss extends Loss {
             // we use negative log likelihood as loss: log(softmax) turns high confidence into
             // negative values near one, low confidence into negative values near -inf,
             // negating gives almost 0 for high confidence and near +inf for very low confidence
-            NDArray logPredictionForLabels = oneHotLabels.mul(logPredictions);
+            NDArray logPredictionForLabels = oneHotLabels.times(logPredictions);
             NDArray summedPredictions = logPredictionForLabels.sum(new int[] {1});
-            NDArray perExampleLoss = summedPredictions.mul(-1f);
+            NDArray perExampleLoss = summedPredictions.times(-1f);
             NDArray result = perExampleLoss.mean();
             return scope.ret(result);
         }

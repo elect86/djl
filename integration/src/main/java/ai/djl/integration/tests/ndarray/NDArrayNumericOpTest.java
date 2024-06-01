@@ -33,25 +33,25 @@ public class NDArrayNumericOpTest {
             NDArray array = manager.create(data);
             data = DoubleStream.of(data).map(x -> -x).toArray();
             NDArray expected = manager.create(data);
-            Assertions.assertAlmostEquals(array.neg(), expected);
-            Assertions.assertInPlaceEquals(array.negi(), expected, array);
+            Assertions.assertAlmostEquals(array.unaryMinus(), expected);
+            Assertions.assertInPlaceEquals(array.unaryMinusInP(), expected, array);
             // test multi-dim
             data = new double[] {-2.2, 2.2, 3, -0.2, 2.76, 0.0002};
             array = manager.create(data, new Shape(2, 3));
             data = DoubleStream.of(data).map(x -> -x).toArray();
             expected = manager.create(data, new Shape(2, 3));
-            Assert.assertEquals(array.neg(), expected);
-            Assertions.assertInPlaceEquals(array.negi(), expected, array);
+            Assert.assertEquals(array.unaryMinus(), expected);
+            Assertions.assertInPlaceEquals(array.unaryMinusInP(), expected, array);
             // test scalar
             array = manager.create(3f);
             expected = manager.create(-3f);
-            Assert.assertEquals(array.neg(), expected);
-            Assertions.assertInPlaceEquals(array.negi(), expected, array);
+            Assert.assertEquals(array.unaryMinus(), expected);
+            Assertions.assertInPlaceEquals(array.unaryMinusInP(), expected, array);
             // test zero-dim
             array = manager.create(new Shape(2, 0, 1));
             expected = manager.create(new Shape(2, 0, 1));
-            Assert.assertEquals(array.neg(), expected);
-            Assertions.assertInPlaceEquals(array.negi(), expected, array);
+            Assert.assertEquals(array.unaryMinus(), expected);
+            Assertions.assertInPlaceEquals(array.unaryMinusInP(), expected, array);
         }
     }
 
@@ -754,7 +754,7 @@ public class NDArrayNumericOpTest {
 
             array = manager.create(new double[] {0, -7, -8, 2, -9});
             expected = manager.create(new double[] {0, -1, -1, 1, -1});
-            Assert.assertEquals(array.signi(), expected);
+            Assert.assertEquals(array.signInP(), expected);
             Assert.assertEquals(array, expected);
 
             // test multi-dim

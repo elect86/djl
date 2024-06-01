@@ -38,7 +38,7 @@ public class StudentTOutput extends DistributionOutput {
         NDArray nu = arrays.get(2);
         mu = mu.squeeze(-1);
         sigma = sigma.getNDArrayInternal().softPlus().squeeze(-1);
-        nu = nu.getNDArrayInternal().softPlus().add(2.).squeeze(-1);
+        nu = nu.getNDArrayInternal().softPlus().plus(2.).squeeze(-1);
         // TODO: make setName() must be implemented
         mu.setName("mu");
         sigma.setName("sigma");

@@ -328,8 +328,8 @@ public class OptimizerTest {
     }
 
     private NDArray runOptimizer(NDManager manager, Trainer trainer, Block block, int batchSize) {
-        NDArray data = manager.ones(new Shape(batchSize, CHANNELS)).mul(2);
-        NDArray label = data.mul(2);
+        NDArray data = manager.ones(new Shape(batchSize, CHANNELS)).times(2);
+        NDArray label = data.times(2);
         Batch batch =
                 new Batch(
                         manager.newSubManager(),

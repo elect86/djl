@@ -134,7 +134,7 @@ public class NDArrayElementArithmeticOpTest {
     }
 
     @Test
-    public void testAddScalar() {
+    public void testPlusScalar() {
         try (Model model = Model.newInstance("model", TestUtils.getEngine())) {
             model.setBlock(Blocks.identityBlock());
             NDManager manager = model.getNDManager();
@@ -179,7 +179,7 @@ public class NDArrayElementArithmeticOpTest {
     }
 
     @Test
-    public void testAddNDArray() {
+    public void testPlusNDArray() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray addend = manager.create(new float[] {1f, 2f, 3f, 4f});
             NDArray addendum = manager.create(new float[] {2f, 3f, 4f, 5f});
@@ -225,7 +225,7 @@ public class NDArrayElementArithmeticOpTest {
     }
 
     @Test
-    public void testSubScalar() {
+    public void testMinusScalar() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray minuend = manager.create(new float[] {6, 9, 12, 11, 0});
             NDArray result = NDArrays.sub(minuend, 3f);
@@ -241,7 +241,7 @@ public class NDArrayElementArithmeticOpTest {
     }
 
     @Test
-    public void testSubNDArray() {
+    public void testMinusNDArray() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray minuend = manager.create(new float[] {6, 9, 12, 15, 0});
             NDArray subtrahend = manager.create(new float[] {2, 3, 4, 5, 6});
@@ -447,7 +447,7 @@ public class NDArrayElementArithmeticOpTest {
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testMatMul() {
+    public void testMatTimes() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             // 2D * 2D
             NDArray lhs = manager.create(new float[] {5, 10, -3, 4, 2, 7}, new Shape(2, 3));
@@ -464,35 +464,35 @@ public class NDArrayElementArithmeticOpTest {
                                 470, 402, 488, 574
                             },
                             new Shape(2, 3, 3));
-            Assert.assertEquals(lhs.matMul(rhs), expected);
+            Assert.assertEquals(lhs.matTimes(rhs), expected);
             // 1D * 2D
             lhs = manager.create(new float[] {2f, 7f});
             rhs = manager.arange(6f).reshape(2, 3);
             expected = manager.create(new float[] {21, 30, 39});
-            Assert.assertEquals(lhs.matMul(rhs), expected);
+            Assert.assertEquals(lhs.matTimes(rhs), expected);
             // scalar case, throw exception
             lhs = manager.create(1f);
             rhs = manager.arange(6f).reshape(2, 3);
             expected = manager.create(new float[] {21, 30, 39});
-            Assert.assertEquals(lhs.matMul(rhs), expected);
+            Assert.assertEquals(lhs.matTimes(rhs), expected);
             // zero-dim
             lhs = manager.create(new Shape(0, 3));
             rhs = manager.create(new Shape(3, 0));
             expected = manager.create(new Shape(0, 0));
-            Assert.assertEquals(lhs.matMul(rhs), expected);
+            Assert.assertEquals(lhs.matTimes(rhs), expected);
             lhs = manager.create(new Shape(3, 0));
             rhs = manager.create(new Shape(0, 2));
             expected = manager.zeros(new Shape(3, 2));
-            Assert.assertEquals(lhs.matMul(rhs), expected);
+            Assert.assertEquals(lhs.matTimes(rhs), expected);
         }
     }
 
     @Test
-    public void testBatchMatMul() {
+    public void testBatchMatTimes() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray lhs = manager.randomNormal(0f, 1f, new Shape(10, 5, 4), DataType.FLOAT32);
             NDArray rhs = manager.randomNormal(0f, 1f, new Shape(10, 4, 3), DataType.FLOAT32);
-            NDArray output = lhs.batchMatMul(rhs);
+            NDArray output = lhs.batchMatTimes(rhs);
             Assert.assertEquals(output.getShape(), new Shape(10, 5, 3));
         }
     }
@@ -587,8 +587,8 @@ public class NDArrayElementArithmeticOpTest {
                     result, expected, "Scalar Remainder: Incorrect value in result ndarray");
             Assertions.assertInPlaceEquals(inPlaceResult, expected, dividend);
 
-            testScalarCornerCase(manager, NDArray::mod, (x, y) -> x % y, false);
-            testScalarCornerCase(manager, NDArray::modi, (x, y) -> x % y, true);
+            testScalarCornerCase(manager, NDArray::rem, (x, y) -> x % y, false);
+            testScalarCornerCase(manager, NDArray::remInP, (x, y) -> x % y, true);
         }
     }
 
@@ -667,7 +667,7 @@ public class NDArrayElementArithmeticOpTest {
             Assertions.assertInPlaceAlmostEquals(inPlaceResult, expected, array);
 
             testScalarCornerCase(manager, NDArray::pow, (x, y) -> (float) Math.pow(x, y), false);
-            testScalarCornerCase(manager, NDArray::powi, (x, y) -> (float) Math.pow(x, y), true);
+            testScalarCornerCase(manager, NDArray::powInP, (x, y) -> (float) Math.pow(x, y), true);
         }
     }
 
@@ -677,7 +677,7 @@ public class NDArrayElementArithmeticOpTest {
             NDArray array = manager.create(new float[] {6, 9, 12, 2, 0});
             NDArray power = manager.create(new float[] {3, 0, 1, -2, 3});
             NDArray result = array.pow(power);
-            NDArray inPlaceResult = array.powi(power);
+            NDArray inPlaceResult = array.powInP(power);
             NDArray expected = manager.create(new float[] {216, 1, 12, 0.25f, 0});
             Assertions.assertAlmostEquals(result, expected, 1e-4, 1e-3);
             Assertions.assertInPlaceAlmostEquals(inPlaceResult, expected, array);

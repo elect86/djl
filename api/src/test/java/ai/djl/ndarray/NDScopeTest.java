@@ -43,7 +43,7 @@ public class NDScopeTest {
             }
 
             Assert.assertFalse(inside.isReleased());
-            Assert.assertThrows(IllegalStateException.class, () -> released.addi(1));
+            Assert.assertThrows(IllegalStateException.class, () -> released.plusInP(1));
         }
         Assert.assertTrue(inside.isReleased());
         Assert.assertFalse(detached.isReleased());

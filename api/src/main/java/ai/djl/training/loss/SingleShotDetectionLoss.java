@@ -63,8 +63,8 @@ public class SingleShotDetectionLoss extends AbstractCompositeLoss {
                 NDArray boundingBoxLabels = targets.get(0);
                 NDArray boundingBoxMasks = targets.get(1);
                 return new Pair<>(
-                        new NDList(boundingBoxLabels.mul(boundingBoxMasks)),
-                        new NDList(boundingBoxPredictions.mul(boundingBoxMasks)));
+                        new NDList(boundingBoxLabels.times(boundingBoxMasks)),
+                        new NDList(boundingBoxPredictions.times(boundingBoxMasks)));
             default:
                 throw new IllegalArgumentException("Invalid component index");
         }

@@ -70,8 +70,8 @@ public class L1WeightDecay extends Loss {
         NDManager manager = parameters.getManager();
         NDArray sum = manager.create(0.0f);
         for (NDArray wi : parameters) {
-            sum.addi(l1(wi));
+            sum.plusInP(l1(wi));
         }
-        return sum.muli(lambda);
+        return sum.timesInP(lambda);
     }
 }

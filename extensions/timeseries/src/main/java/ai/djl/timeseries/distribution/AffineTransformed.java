@@ -43,8 +43,8 @@ public class AffineTransformed extends Distribution {
     public NDArray logProb(NDArray target) {
         NDArray x = fInv(target);
         NDArray ladj = logAbsDetJac(x);
-        NDArray lp = ladj.mul(-1);
-        return baseDistribution.logProb(x).add(lp);
+        NDArray lp = ladj.times(-1);
+        return baseDistribution.logProb(x).plus(lp);
     }
 
     /** {@inheritDoc} */
@@ -57,15 +57,15 @@ public class AffineTransformed extends Distribution {
     /** {@inheritDoc} */
     @Override
     public NDArray mean() {
-        return baseDistribution.mean().mul(scale).add(loc);
+        return baseDistribution.mean().times(scale).plus(loc);
     }
 
     private NDArray f(NDArray x) {
-        return x.mul(scale).add(loc);
+        return x.times(scale).plus(loc);
     }
 
     private NDArray fInv(NDArray y) {
-        return y.sub(loc).div(scale);
+        return y.minus(loc).div(scale);
     }
 
     private NDArray logAbsDetJac(NDArray x) {

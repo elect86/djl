@@ -48,7 +48,7 @@ public final class Feature {
         NDArray value = data.get(targetField);
         data.setField(targetField, dummyValueImputation(manager, value, 0f));
         NDArray nanEntries = value.isNaN();
-        data.setField(outputField, nanEntries.logicalNot().toType(value.getDataType(), false));
+        data.setField(outputField, nanEntries.not().toType(value.getDataType(), false));
     }
 
     /**
@@ -200,7 +200,7 @@ public final class Feature {
 
         NDArray age = manager.arange(0, length, 1, targetData.getDataType());
         if (logScale) {
-            age = age.add(2f).log10();
+            age = age.plus(2f).log10();
         }
         age = age.reshape(new Shape(1, length));
 

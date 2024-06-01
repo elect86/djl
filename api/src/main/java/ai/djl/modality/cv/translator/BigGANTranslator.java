@@ -40,7 +40,7 @@ public final class BigGANTranslator implements NoBatchifyTranslator<int[], Image
     /** {@inheritDoc} */
     @Override
     public Image[] processOutput(TranslatorContext ctx, NDList list) {
-        NDArray output = list.get(0).duplicate().addi(1).muli(128).clip(0, 255);
+        NDArray output = list.get(0).duplicate().plusInP(1).timesInP(128).clip(0, 255);
         int sampleSize = (int) output.getShape().get(0);
         Image[] images = new Image[sampleSize];
 
@@ -57,7 +57,7 @@ public final class BigGANTranslator implements NoBatchifyTranslator<int[], Image
 
         NDArray classes = manager.create(input).oneHot(NUMBER_OF_CATEGORIES);
         NDArray seed =
-                manager.truncatedNormal(new Shape(input.length, SEED_COLUMN_SIZE)).muli(truncation);
+                manager.truncatedNormal(new Shape(input.length, SEED_COLUMN_SIZE)).timesInP(truncation);
 
         return new NDList(seed, classes, manager.create(truncation));
     }

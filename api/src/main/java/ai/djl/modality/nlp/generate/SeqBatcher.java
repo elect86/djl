@@ -157,7 +157,7 @@ public class SeqBatcher {
 
             batchSize = seqBatcher1.batchSize + seqBatcher2.batchSize;
             batchUid = seqBatcher1.batchUid.concat(seqBatcher2.batchUid, 0);
-            offSets = seqBatcher1.offSets.concat(seqBatcher2.offSets.addi(seqDelta), 0);
+            offSets = seqBatcher1.offSets.concat(seqBatcher2.offSets.plusInP(seqDelta), 0);
             seqLength = seqBatcher1.seqLength;
 
             // memory
@@ -242,7 +242,7 @@ public class SeqBatcher {
             batchUid = batchUid.get(ndIndex).reshape(-1, 1);
             offSets = offSets.get(ndIndex).reshape(-1, 1);
             long trimSeq = offSets.min(new int[] {0}).toLongArray()[0];
-            offSets = offSets.subi(trimSeq);
+            offSets = offSets.minusInP(trimSeq);
 
             // Trim batch, and sequence dim if needed
             NDList list = data.getList();

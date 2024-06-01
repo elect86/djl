@@ -273,7 +273,7 @@ public abstract class NDArrayAdapter implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public void set(Buffer buffer) {
+    public void setFrom(Buffer buffer) {
         NDArray array = manager.create(buffer, getShape(), getDataType());
         intern(array);
         array.detach();
@@ -283,35 +283,35 @@ public abstract class NDArrayAdapter implements NDArray {
     @Override
     public void set(NDIndex index, NDArray value) {
         getAlternativeArray().set(index, value);
-        set(alternativeArray.toByteBuffer());
+        setFrom(alternativeArray.toByteBuffer());
     }
 
     /** {@inheritDoc} */
     @Override
     public void set(NDIndex index, Number value) {
         getAlternativeArray().set(index, value);
-        set(alternativeArray.toByteBuffer());
+        setFrom(alternativeArray.toByteBuffer());
     }
 
     /** {@inheritDoc} */
     @Override
     public void set(NDIndex index, Function<NDArray, NDArray> function) {
         getAlternativeArray().set(index, function);
-        set(alternativeArray.toByteBuffer());
+        setFrom(alternativeArray.toByteBuffer());
     }
 
     /** {@inheritDoc} */
     @Override
     public void set(NDArray index, Number value) {
         getAlternativeArray().set(index, value);
-        set(alternativeArray.toByteBuffer());
+        setFrom(alternativeArray.toByteBuffer());
     }
 
     /** {@inheritDoc} */
     @Override
     public void setScalar(NDIndex index, Number value) {
         getAlternativeArray().setScalar(index, value);
-        set(alternativeArray.toByteBuffer());
+        setFrom(alternativeArray.toByteBuffer());
     }
 
     /** {@inheritDoc} */
@@ -422,38 +422,38 @@ public abstract class NDArrayAdapter implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public NDArray add(Number n) {
-        return getAlternativeArray().add(n);
+    public NDArray plus(Number n) {
+        return getAlternativeArray().plus(n);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray add(NDArray other) {
-        return getAlternativeArray().add(alternativeManager.from(other));
+    public NDArray plus(NDArray other) {
+        return getAlternativeArray().plus(alternativeManager.from(other));
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray sub(Number n) {
-        return getAlternativeArray().sub(n);
+    public NDArray minus(Number n) {
+        return getAlternativeArray().minus(n);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray sub(NDArray other) {
-        return getAlternativeArray().sub(alternativeManager.from(other));
+    public NDArray minus(NDArray other) {
+        return getAlternativeArray().minus(alternativeManager.from(other));
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray mul(Number n) {
-        return getAlternativeArray().mul(n);
+    public NDArray times(Number n) {
+        return getAlternativeArray().times(n);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray mul(NDArray other) {
-        return getAlternativeArray().mul(alternativeManager.from(other));
+    public NDArray times(NDArray other) {
+        return getAlternativeArray().times(alternativeManager.from(other));
     }
 
     /** {@inheritDoc} */
@@ -470,14 +470,14 @@ public abstract class NDArrayAdapter implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public NDArray mod(Number n) {
-        return getAlternativeArray().mod(n);
+    public NDArray rem(Number n) {
+        return getAlternativeArray().rem(n);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray mod(NDArray other) {
-        return getAlternativeArray().mod(alternativeManager.from(other));
+    public NDArray rem(NDArray other) {
+        return getAlternativeArray().rem(alternativeManager.from(other));
     }
 
     /** {@inheritDoc} */
@@ -494,73 +494,135 @@ public abstract class NDArrayAdapter implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public NDArray addi(Number n) {
+    public void plusAssign(Number n) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray addi(NDArray other) {
+    public NDArray plusInP(Number n) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray subi(Number n) {
+    public void plusAssign(NDArray other) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray subi(NDArray other) {
+    public NDArray plusInP(NDArray other) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray muli(Number n) {
+    public void minusAssign(Number n) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public NDArray minusInP(Number n) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray muli(NDArray other) {
+    public void minusAssign(NDArray other) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray divi(Number n) {
+    public NDArray minusInP(NDArray other) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray divi(NDArray other) {
+    public void timesAssign(Number n) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray modi(Number n) {
+    public NDArray timesInP(Number n) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray modi(NDArray other) {
+    public void timesAssign(NDArray other) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray powi(Number n) {
+    public NDArray timesInP(NDArray other) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray powi(NDArray other) {
+    public void divAssign(Number n) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public NDArray divInP(Number n) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void divAssign(NDArray other) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public NDArray divInP(NDArray other) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void remAssign(Number n) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public NDArray remInP(Number n) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void remAssign(NDArray other) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public NDArray remInP(NDArray other) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public NDArray powInP(Number n) {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public NDArray powInP(NDArray other) {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
@@ -572,43 +634,43 @@ public abstract class NDArrayAdapter implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public NDArray signi() {
+    public NDArray signInP() {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray maximum(Number n) {
-        return getAlternativeArray().maximum(n);
+    public NDArray max(Number n) {
+        return getAlternativeArray().max(n);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray maximum(NDArray other) {
-        return getAlternativeArray().maximum(alternativeManager.from(other));
+    public NDArray max(NDArray other) {
+        return getAlternativeArray().max(alternativeManager.from(other));
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray minimum(Number n) {
-        return getAlternativeArray().minimum(n);
+    public NDArray min(Number n) {
+        return getAlternativeArray().min(n);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray minimum(NDArray other) {
-        return getAlternativeArray().minimum(alternativeManager.from(other));
+    public NDArray min(NDArray other) {
+        return getAlternativeArray().min(alternativeManager.from(other));
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray neg() {
-        return getAlternativeArray().neg();
+    public NDArray unaryMinus() {
+        return getAlternativeArray().unaryMinus();
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray negi() {
+    public NDArray unaryMinusInP() {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
@@ -968,8 +1030,8 @@ public abstract class NDArrayAdapter implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public NDArray logicalNot() {
-        return getAlternativeArray().logicalNot();
+    public NDArray not() {
+        return getAlternativeArray().not();
     }
 
     /** {@inheritDoc} */
@@ -1082,13 +1144,13 @@ public abstract class NDArrayAdapter implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public NDArray matMul(NDArray other) {
-        return getAlternativeArray().matMul(other);
+    public NDArray matTimes(NDArray other) {
+        return getAlternativeArray().matTimes(other);
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray batchMatMul(NDArray other) {
+    public NDArray batchMatTimes(NDArray other) {
         throw new UnsupportedOperationException();
     }
 
@@ -1314,7 +1376,7 @@ public abstract class NDArrayAdapter implements NDArray {
         if (alternativeArray == null) {
             alternativeArray = alternativeManager.from(this);
         } else {
-            alternativeArray.set(getDataType().asDataType(toByteBuffer()));
+            alternativeArray.setFrom(getDataType().asDataType(toByteBuffer()));
         }
         return alternativeArray;
     }

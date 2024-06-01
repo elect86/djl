@@ -46,11 +46,11 @@ public class MkldnnTest {
                 manager.randomUniform(0, 1, new Shape(2, 2))
             };
             // run sanity check, if two arrays are on different layout, it will throw exception
-            Arrays.stream(arrays).reduce(NDArray::add);
+            Arrays.stream(arrays).reduce(NDArray::plus);
             Arrays.stream(arrays).forEach(NDArray::toString);
             arrays = new NDArray[] {manager.arange(4f), manager.linspace(0, 1, 4)};
             // run sanity check, if two arrays are on different layout, it will throw exception
-            Arrays.stream(arrays).reduce(NDArray::add);
+            Arrays.stream(arrays).reduce(NDArray::plus);
             Arrays.stream(arrays).forEach(NDArray::toString);
         } finally {
             System.setProperty("ai.djl.pytorch.use_mkldnn", "false");

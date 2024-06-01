@@ -156,7 +156,7 @@ public class TrtTest {
         public NDList processInput(TranslatorContext ctx, float[] input) {
             // Reuse NDArrays that bound to TensorRT engine
             NDList inputs = session.getInputBindings();
-            inputs.head().set(FloatBuffer.wrap(input));
+            inputs.head().setFrom(FloatBuffer.wrap(input));
             return inputs;
         }
     }

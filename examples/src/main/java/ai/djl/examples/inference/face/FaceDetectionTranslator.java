@@ -71,7 +71,7 @@ public class FaceDetectionTranslator implements Translator<Image, DetectedObject
         }
         NDArray mean =
                 ctx.getNDManager().create(new float[] {104f, 117f, 123f}, new Shape(3, 1, 1));
-        array = array.sub(mean);
+        array = array.minus(mean);
         return new NDList(array);
     }
 
@@ -95,14 +95,14 @@ public class FaceDetectionTranslator implements Translator<Image, DetectedObject
 
         NDArray boxRecover = boxRecover(manager, width, height, scales, steps);
         NDArray boundingBoxes = list.get(0);
-        NDArray bbWH = boundingBoxes.get(":, 2:").mul(scaleWH).exp().mul(boxRecover.get(":, 2:"));
+        NDArray bbWH = boundingBoxes.get(":, 2:").times(scaleWH).exp().times(boxRecover.get(":, 2:"));
         NDArray bbXY =
                 boundingBoxes
                         .get(":, :2")
-                        .mul(scaleXY)
-                        .mul(boxRecover.get(":, 2:"))
-                        .add(boxRecover.get(":, :2"))
-                        .sub(bbWH.mul(0.5f));
+                        .times(scaleXY)
+                        .times(boxRecover.get(":, 2:"))
+                        .plus(boxRecover.get(":, :2"))
+                        .minus(bbWH.times(0.5f));
 
         boundingBoxes = NDArrays.concat(new NDList(bbXY, bbWH), 1);
 
@@ -199,15 +199,15 @@ public class FaceDetectionTranslator implements Translator<Image, DetectedObject
     // decode face landmarks, 5 points per face
     private NDArray decodeLandm(NDArray pre, NDArray priors, double scaleXY) {
         NDArray point1 =
-                pre.get(":, :2").mul(scaleXY).mul(priors.get(":, 2:")).add(priors.get(":, :2"));
+                pre.get(":, :2").times(scaleXY).times(priors.get(":, 2:")).plus(priors.get(":, :2"));
         NDArray point2 =
-                pre.get(":, 2:4").mul(scaleXY).mul(priors.get(":, 2:")).add(priors.get(":, :2"));
+                pre.get(":, 2:4").times(scaleXY).times(priors.get(":, 2:")).plus(priors.get(":, :2"));
         NDArray point3 =
-                pre.get(":, 4:6").mul(scaleXY).mul(priors.get(":, 2:")).add(priors.get(":, :2"));
+                pre.get(":, 4:6").times(scaleXY).times(priors.get(":, 2:")).plus(priors.get(":, :2"));
         NDArray point4 =
-                pre.get(":, 6:8").mul(scaleXY).mul(priors.get(":, 2:")).add(priors.get(":, :2"));
+                pre.get(":, 6:8").times(scaleXY).times(priors.get(":, 2:")).plus(priors.get(":, :2"));
         NDArray point5 =
-                pre.get(":, 8:10").mul(scaleXY).mul(priors.get(":, 2:")).add(priors.get(":, :2"));
+                pre.get(":, 8:10").times(scaleXY).times(priors.get(":, 2:")).plus(priors.get(":, :2"));
         return NDArrays.concat(new NDList(point1, point2, point3, point4, point5), 1);
     }
 }

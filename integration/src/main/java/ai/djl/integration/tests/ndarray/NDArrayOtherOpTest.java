@@ -88,14 +88,14 @@ public class NDArrayOtherOpTest {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array = manager.arange(10);
             Assert.assertFalse(array.all().getBoolean());
-            Assert.assertTrue(array.add(1f).all().getBoolean());
+            Assert.assertTrue(array.plus(1f).all().getBoolean());
             array = manager.create(new boolean[] {true, false});
             Assert.assertFalse(array.all().getBoolean());
 
             // test multi-dim
             array = manager.arange(20).reshape(2, 5, 2);
             Assert.assertFalse(array.all().getBoolean());
-            Assert.assertTrue(array.add(1f).all().getBoolean());
+            Assert.assertTrue(array.plus(1f).all().getBoolean());
             array =
                     manager.create(
                             new boolean[] {true, false, true, false, true, false}, new Shape(2, 3));
@@ -264,29 +264,29 @@ public class NDArrayOtherOpTest {
     }
 
     @Test
-    public void testSet() {
+    public void testSetFrom() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             // test float
             NDArray array = manager.create(1f);
             float[] data = {-1};
-            array.set(FloatBuffer.wrap(data));
+            array.setFrom(FloatBuffer.wrap(data));
             NDArray expected = manager.create(-1f);
             Assertions.assertAlmostEquals(array, expected);
             array = manager.zeros(new Shape(2, 3));
             data = new float[] {0, 1, 2, 3, 4, 5};
-            array.set(FloatBuffer.wrap(data));
+            array.setFrom(FloatBuffer.wrap(data));
             expected = manager.arange(6f).reshape(2, 3);
             Assert.assertEquals(array, expected);
             array = manager.create(new float[] {1.2f, 3.4f, 2.7f, 8.9999f}, new Shape(2, 1, 1, 2));
             data = new float[] {7.9f, 3.4f, 2.2f, 5.6f};
-            array.set(FloatBuffer.wrap(data));
+            array.setFrom(FloatBuffer.wrap(data));
             expected = manager.create(data, new Shape(2, 1, 1, 2));
             Assert.assertEquals(array, expected);
 
             // test buffer larger than NDArray
             array = manager.create(new float[] {0, 1, 2});
             data = new float[] {9, 8, 7, 6, 5};
-            array.set(FloatBuffer.wrap(data));
+            array.setFrom(FloatBuffer.wrap(data));
             expected = manager.create(new float[] {9, 8, 7});
             Assert.assertEquals(array, expected);
 
@@ -295,13 +295,13 @@ public class NDArrayOtherOpTest {
                     IllegalArgumentException.class,
                     () -> {
                         NDArray ndArray = manager.create(new float[] {0, 1, 2});
-                        ndArray.set(FloatBuffer.wrap(new float[] {-1}));
+                        ndArray.setFrom(FloatBuffer.wrap(new float[] {-1}));
                     });
         }
     }
 
     @Test
-    public void testSetBoolean() {
+    public void testSetFromBoolean() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array = manager.arange(0f, 6f).reshape(2, 3);
             array.set(array.gte(2), 10f);
@@ -431,17 +431,17 @@ public class NDArrayOtherOpTest {
     public void testSoftmax() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array = manager.ones(new Shape(10));
-            NDArray expected = manager.zeros(new Shape(10)).add(0.1f);
+            NDArray expected = manager.zeros(new Shape(10)).plus(0.1f);
             Assertions.assertAlmostEquals(array.softmax(0), expected);
             // test multi-dim
             array = manager.ones(new Shape(2, 3, 1, 3));
-            expected = manager.zeros(new Shape(2, 3, 1, 3)).add(0.5f);
+            expected = manager.zeros(new Shape(2, 3, 1, 3)).plus(0.5f);
             Assertions.assertAlmostEquals(array.softmax(0), expected);
-            expected = manager.zeros(new Shape(2, 3, 1, 3)).add(0.33333334f);
+            expected = manager.zeros(new Shape(2, 3, 1, 3)).plus(0.33333334f);
             Assertions.assertAlmostEquals(array.softmax(1), expected);
             expected = manager.ones(new Shape(2, 3, 1, 3));
             Assertions.assertAlmostEquals(array.softmax(2), expected);
-            expected = manager.zeros(new Shape(2, 3, 1, 3)).add(0.33333334f);
+            expected = manager.zeros(new Shape(2, 3, 1, 3)).plus(0.33333334f);
             Assertions.assertAlmostEquals(array.softmax(3), expected);
             // test scalar
             array = manager.create(1f);
@@ -456,13 +456,13 @@ public class NDArrayOtherOpTest {
     public void testLogSoftmax() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array = manager.ones(new Shape(10));
-            NDArray expected = manager.zeros(new Shape(10)).add(-2.3025851f);
+            NDArray expected = manager.zeros(new Shape(10)).plus(-2.3025851f);
             Assertions.assertAlmostEquals(array.logSoftmax(0), expected);
             // test multi-dim
             array = manager.ones(new Shape(2, 3, 1, 3));
-            expected = manager.zeros(new Shape(2, 3, 1, 3)).add(-0.6931472f);
+            expected = manager.zeros(new Shape(2, 3, 1, 3)).plus(-0.6931472f);
             Assertions.assertAlmostEquals(array.logSoftmax(0), expected);
-            expected = manager.zeros(new Shape(2, 3, 1, 3)).add(-1.0986123f);
+            expected = manager.zeros(new Shape(2, 3, 1, 3)).plus(-1.0986123f);
             Assertions.assertAlmostEquals(array.logSoftmax(1), expected);
             // test scalar
             array = manager.create(1f);
@@ -1009,7 +1009,7 @@ public class NDArrayOtherOpTest {
             x.setRequiresGradient(true);
             Engine engine = Engine.getEngine(TestUtils.getEngine());
             try (GradientCollector gc = engine.newGradientCollector()) {
-                NDArray y = x.mul(x);
+                NDArray y = x.times(x);
                 gc.backward(y);
                 NDArray grad = x.getGradient();
                 Assert.assertEquals(2f, grad.getFloat(0));
@@ -1018,7 +1018,7 @@ public class NDArrayOtherOpTest {
             x = manager.create(new float[] {1.0f}, new Shape(1));
             x.setRequiresGradient(true);
             try (GradientCollector gc = engine.newGradientCollector()) {
-                NDArray z = x.mul(x.stopGradient());
+                NDArray z = x.times(x.stopGradient());
                 gc.backward(z);
                 NDArray grad = x.getGradient();
                 Assert.assertEquals(1f, grad.getFloat(0));

@@ -26,7 +26,7 @@ public final class AudioUtils {
      * @return root mean square energy
      */
     public static float rmsDb(NDArray samples) {
-        samples = samples.pow(2).mean().log10().mul(10);
+        samples = samples.pow(2).mean().log10().times(10);
         return samples.toFloatArray()[0];
     }
 }

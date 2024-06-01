@@ -213,8 +213,8 @@ public abstract class SeqBatchScheduler {
                         .expandDims(0)
                         .repeat(0, inputIds.getShape().get(0));
 
-        NDArray positionIdsShifted = positionIds.subi(offSets.reshape(-1, 1).repeat(0, repeat));
-        positionIds = positionIdsShifted.maximum(positionIdsShifted.zerosLike());
+        NDArray positionIdsShifted = positionIds.minusInP(offSets.reshape(-1, 1).repeat(0, repeat));
+        positionIds = positionIdsShifted.max(positionIdsShifted.zerosLike());
 
         // [batch, inputSeq]
         return positionIds;

@@ -81,7 +81,7 @@ public class TfNDArrayEx implements NDArrayEx {
     /** {@inheritDoc} */
     @Override
     public NDArray rsub(NDArray b) {
-        return b.sub(array);
+        return b.minus(array);
     }
 
     /** {@inheritDoc} */
@@ -112,7 +112,7 @@ public class TfNDArrayEx implements NDArrayEx {
     /** {@inheritDoc} */
     @Override
     public NDArray rmod(NDArray b) {
-        return b.mod(array);
+        return b.rem(array);
     }
 
     /** {@inheritDoc} */
@@ -471,7 +471,7 @@ public class TfNDArrayEx implements NDArrayEx {
         TfNDManager manager = array.getManager();
         try (NDArray meanArr = manager.create(mean, shape);
                 NDArray stdArr = manager.create(std, shape)) {
-            return getArray().sub(meanArr).divi(stdArr);
+            return getArray().minus(meanArr).divInP(stdArr);
         }
     }
 

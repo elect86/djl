@@ -55,13 +55,13 @@ public class BertMaskedLanguageModelLoss extends Loss {
             // By summing we get the total predicition quality. We want to minimize the error,
             // so we negate the value - as we have logarithms, probability = 1 means log(prob) = 0,
             // the less sure we are the smaller the log value.
-            NDArray perExampleLoss = logProbs.mul(targetOneHots).sum(new int[] {1}).mul(-1);
+            NDArray perExampleLoss = logProbs.times(targetOneHots).sum(new int[] {1}).times(-1);
             // Multiplying log_probs and one_hot_labels leaves the log probabilities of the correct
             // entries.
             // By summing we get the total prediction quality.
-            NDArray numerator = perExampleLoss.mul(mask).sum();
+            NDArray numerator = perExampleLoss.times(mask).sum();
             // We normalize the loss by the actual number of predictions we had to make
-            NDArray denominator = mask.sum().add(1e-5f);
+            NDArray denominator = mask.sum().plus(1e-5f);
             NDArray result = numerator.div(denominator);
 
             return scope.ret(result);
@@ -83,7 +83,7 @@ public class BertMaskedLanguageModelLoss extends Loss {
             NDArray targetIds = labels.get(labelIdx).flatten(); // (B * I)
             NDArray logProbs = predictions.get(logProbsIdx); // (B * I, D)
             NDArray predictedIs = logProbs.argMax(1).toType(DataType.INT32, false); // (B * I)
-            NDArray equal = predictedIs.eq(targetIds).mul(mask);
+            NDArray equal = predictedIs.eq(targetIds).times(mask);
             NDArray equalCount = equal.sum().toType(DataType.FLOAT32, false);
             NDArray count = mask.sum().toType(DataType.FLOAT32, false);
             NDArray result = equalCount.div(count);

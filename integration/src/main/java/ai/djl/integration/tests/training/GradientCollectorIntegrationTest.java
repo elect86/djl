@@ -90,7 +90,7 @@ public class GradientCollectorIntegrationTest {
 
             Engine engine = Engine.getEngine(TestUtils.getEngine());
             try (GradientCollector gc = engine.newGradientCollector()) {
-                NDArray b = a.mul(2);
+                NDArray b = a.times(2);
 
                 // Gradients are initially zero
                 Assert.assertEquals(a.getGradient().getFloat(), 0.0f);
@@ -118,7 +118,7 @@ public class GradientCollectorIntegrationTest {
             Engine engine = Engine.getEngine(TestUtils.getEngine());
             for (int i = 0; i < 3; i++) {
                 try (GradientCollector gc = engine.newGradientCollector()) {
-                    NDArray b = a.mul(2);
+                    NDArray b = a.times(2);
                     gc.backward(b);
                 }
                 Assert.assertEquals(a.getGradient().getFloat(), 2.0f);
@@ -138,7 +138,7 @@ public class GradientCollectorIntegrationTest {
             Engine engine = Engine.getEngine(TestUtils.getEngine());
             try (GradientCollector gc = engine.newGradientCollector()) {
                 for (int i = 1; i <= 3; i++) {
-                    NDArray b = a.mul(2);
+                    NDArray b = a.times(2);
                     gc.backward(b);
                     Assert.assertEquals(a.getGradient().getFloat(), 2.0f * i);
                 }
@@ -256,9 +256,9 @@ public class GradientCollectorIntegrationTest {
             float bias = 4.2f;
             NDArray data = manager.randomNormal(new Shape(numOfData, weight.size(0)));
             // y = w * x + b
-            NDArray label = data.dot(weight).add(bias);
+            NDArray label = data.dot(weight).plus(bias);
             // add noise
-            label.addi(
+            label.plusInP(
                     manager.randomNormal(
                             0f, 0.01f, label.getShape(), DataType.FLOAT32, manager.getDevice()));
 

@@ -139,7 +139,7 @@ public class OpenCVImageFactoryTest {
                         {1, 1, 0, 0, 0},
                         {1, 0, 0, 0, 1}
                     };
-            NDArray array = manager.create(arr).muli(255).expandDims(0);
+            NDArray array = manager.create(arr).timesInP(255).expandDims(0);
             OpenCVImage image = (OpenCVImage) factory.fromNDArray(array);
             List<BoundingBox> rectangles = image.findBoundingBoxes();
             List<Rectangle> expected =

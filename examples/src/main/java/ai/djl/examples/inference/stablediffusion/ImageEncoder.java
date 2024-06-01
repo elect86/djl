@@ -33,7 +33,7 @@ public class ImageEncoder implements NoBatchifyTranslator<Image, NDArray> {
     @Override
     public NDArray processOutput(TranslatorContext ctx, NDList list) throws Exception {
         NDArray result = list.singletonOrThrow();
-        result = result.mul(0.18215f);
+        result = result.times(0.18215f);
         result.detach();
         return result;
     }
@@ -47,7 +47,7 @@ public class ImageEncoder implements NoBatchifyTranslator<Image, NDArray> {
 
         array = NDImageUtils.resize(array, size[1], size[0]);
         array = array.transpose(2, 0, 1).div(255f); // HWC -> CHW RGB
-        array = array.mul(2).sub(1);
+        array = array.times(2).minus(1);
         array = array.expandDims(0);
         return new NDList(array);
     }

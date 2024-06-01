@@ -134,7 +134,7 @@ public final class TrainAmazonReviewRanking {
                 .optDataBatchifier(
                         PaddingStackBatchifier.builder()
                                 .optIncludeValidLengths(false)
-                                .addPad(0, 0, (m) -> m.ones(new Shape(1)).mul(paddingToken))
+                                .addPad(0, 0, (m) -> m.ones(new Shape(1)).times(paddingToken))
                                 .build())
                 .optLimit(arguments.getLimit())
                 .build();

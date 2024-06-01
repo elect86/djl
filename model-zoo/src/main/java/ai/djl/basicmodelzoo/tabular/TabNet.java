@@ -117,7 +117,7 @@ public final class TabNet extends AbstractBlock {
      * @return the {@link NDArray} after applying tabNetGLU function
      */
     public static NDArray tabNetGLU(NDArray array, int units) {
-        return array.get(":,:{}", units).mul(Activation.sigmoid(array.get(":, {}:", units)));
+        return array.get(":,:{}", units).times(Activation.sigmoid(array.get(":, {}:", units)));
     }
 
     /**
@@ -217,7 +217,7 @@ public final class TabNet extends AbstractBlock {
                                         NDArrays.add(
                                                         unit.singletonOrThrow(),
                                                         parallel.singletonOrThrow())
-                                                .mul(Math.sqrt(0.5)));
+                                                .times(Math.sqrt(0.5)));
                             },
                             Arrays.asList(allBlocks.get(i), Blocks.identityBlock())));
         }
@@ -251,10 +251,10 @@ public final class TabNet extends AbstractBlock {
             if (out == null) {
                 out = Activation.relu(xte.get(":,:" + this.numD));
             } else {
-                out = out.add(Activation.relu(xte.get(":,:" + this.numD)));
+                out = out.plus(Activation.relu(xte.get(":,:" + this.numD)));
             }
             xa = xte.get(":," + this.numD + ":");
-            sparseLoss = sparseLoss == null ? loss : sparseLoss.add(loss);
+            sparseLoss = sparseLoss == null ? loss : sparseLoss.plus(loss);
         }
         NDArray finalOutput =
                 fullyConnected
@@ -362,7 +362,7 @@ public final class TabNet extends AbstractBlock {
             NDList x1 = fullyConnected.forward(parameterStore, new NDList(x), training);
             NDList x2 = batchNorm.forward(parameterStore, x1, training);
             return sparseMax.forward(
-                    parameterStore, new NDList(x2.singletonOrThrow().mul(priors)), training);
+                    parameterStore, new NDList(x2.singletonOrThrow().times(priors)), training);
         }
 
         /** {@inheritDoc} */
@@ -443,8 +443,8 @@ public final class TabNet extends AbstractBlock {
                     attentionTransformer.forward(parameterStore, new NDList(a, priors), training);
             NDArray sparseLoss =
                     mask.singletonOrThrow()
-                            .mul(-1)
-                            .mul(NDArrays.add(mask.singletonOrThrow(), 1e-10).log());
+                            .times(-1)
+                            .times(NDArrays.add(mask.singletonOrThrow(), 1e-10).log());
             NDList x1 = featureTransformer.forward(parameterStore, new NDList(x), training);
             return new NDList(x1.singletonOrThrow(), sparseLoss);
         }

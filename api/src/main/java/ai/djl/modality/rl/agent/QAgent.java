@@ -109,7 +109,7 @@ public class QAgent implements RlAgent {
                     postQ = new NDList(step.getReward());
                 } else {
                     NDArray bestAction = results.get("1:").max();
-                    postQ = new NDList(bestAction.mul(rewardDiscount).add(step.getReward()));
+                    postQ = new NDList(bestAction.times(rewardDiscount).plus(step.getReward()));
                 }
                 NDArray lossValue = trainer.getLoss().evaluate(postQ, preQ);
                 collector.backward(lossValue);

@@ -79,14 +79,14 @@ public class PtSsdTranslator extends ObjectDetectionTranslator {
                                 prob.argMax(1).toType(DataType.FLOAT32, false),
                                 prob.max(new int[] {1})));
         NDArray boundingBoxes = list.get(0).swapAxes(0, 1);
-        NDArray bbWH = boundingBoxes.get(":, 2:").mul(scaleWH).exp().mul(boxRecover.get(":, 2:"));
+        NDArray bbWH = boundingBoxes.get(":, 2:").times(scaleWH).exp().times(boxRecover.get(":, 2:"));
         NDArray bbXY =
                 boundingBoxes
                         .get(":, :2")
-                        .mul(scaleXY)
-                        .mul(boxRecover.get(":, 2:"))
-                        .add(boxRecover.get(":, :2"))
-                        .sub(bbWH.mul(0.5f));
+                        .times(scaleXY)
+                        .times(boxRecover.get(":, 2:"))
+                        .plus(boxRecover.get(":, :2"))
+                        .minus(bbWH.times(0.5f));
         boundingBoxes = NDArrays.concat(new NDList(bbXY, bbWH), 1);
         // filter the result below the threshold
         NDArray cutOff = prob.get(1).gte(threshold);

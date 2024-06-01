@@ -126,7 +126,7 @@ public final class Cifar10 extends ArrayDataset {
             int length = buf.length / DATA_AND_LABEL_SIZE;
             try (NDArray array =
                     manager.create(new Shape(length, DATA_AND_LABEL_SIZE), DataType.UINT8)) {
-                array.set(buf);
+                array.setFrom(buf);
                 return array.toType(DataType.FLOAT32, false);
             }
         }

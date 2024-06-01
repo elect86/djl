@@ -54,7 +54,7 @@ public class L2Loss extends Loss {
     public NDArray evaluate(NDList label, NDList prediction) {
         NDArray pred = prediction.singletonOrThrow();
         NDArray labelReshaped = label.singletonOrThrow().reshape(pred.getShape());
-        NDArray loss = labelReshaped.sub(pred).square().mul(weight);
+        NDArray loss = labelReshaped.minus(pred).square().times(weight);
         return loss.mean();
     }
 }

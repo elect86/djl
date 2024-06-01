@@ -156,7 +156,7 @@ public final class ResNetV1 {
                     NDList parallel = list.get(1);
                     return new NDList(
                             unit.singletonOrThrow()
-                                    .add(parallel.singletonOrThrow())
+                                    .plus(parallel.singletonOrThrow())
                                     .getNDArrayInternal()
                                     .relu());
                 },

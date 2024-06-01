@@ -59,9 +59,9 @@ public class HingeLoss extends Loss {
     public NDArray evaluate(NDList label, NDList prediction) {
         NDArray pred = prediction.singletonOrThrow();
         NDArray labelReshaped = label.singletonOrThrow().reshape(pred.getShape());
-        NDArray loss = Activation.relu(NDArrays.sub(margin, labelReshaped.mul(pred)));
+        NDArray loss = Activation.relu(NDArrays.sub(margin, labelReshaped.times(pred)));
         if (weight != 1) {
-            loss = loss.mul(weight);
+            loss = loss.times(weight);
         }
         return loss.mean();
     }

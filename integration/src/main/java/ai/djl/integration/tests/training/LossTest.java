@@ -98,7 +98,7 @@ public class LossTest {
         TestUtils.requiresEngine("MXNet", "PyTorch", "TensorFlow");
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray pred = manager.create(new float[] {1, 2, 3, 4, 5});
-            NDArray label = manager.ones(new Shape(5)).neg();
+            NDArray label = manager.ones(new Shape(5)).unaryMinus();
             Assert.assertEquals(
                     Loss.hingeLoss().evaluate(new NDList(label), new NDList(pred)).getFloat(),
                     4.0f);

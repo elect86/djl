@@ -114,12 +114,12 @@ public class NDArrayElementComparisonOpTest {
             array1 =
                     manager.create(
                             new float[] {1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f}, new Shape(2, 5));
-            array2 = manager.arange(10.0f).add(1).reshape(2, 5);
+            array2 = manager.arange(10.0f).plus(1).reshape(2, 5);
             result = NDArrays.eq(array1, array2);
             expected = manager.ones(new Shape(2, 5)).toType(DataType.BOOLEAN, false);
             Assert.assertEquals(result, expected);
             // test scalar
-            array1 = manager.ones(new Shape(4)).mul(5);
+            array1 = manager.ones(new Shape(4)).times(5);
             array2 = manager.create(5f);
             result = NDArrays.eq(array1, array2);
             expected = manager.create(new boolean[] {true, true, true, true});
@@ -159,7 +159,7 @@ public class NDArrayElementComparisonOpTest {
 
             // test multi-dim
             array1 = manager.arange(10.0f, 20.0f).reshape(2, 5);
-            array2 = array1.add(1e-5f);
+            array2 = array1.plus(1e-5f);
             Assert.assertTrue(array1.allClose(array2));
             Assert.assertTrue(NDArrays.allClose(array1, array2));
 
@@ -292,7 +292,7 @@ public class NDArrayElementComparisonOpTest {
                     manager.create(
                             new float[] {3f, 2.19f, 3.1f, -3.2f, -4, -2, -1.1f, -2.3f},
                             new Shape(2, 1, 2, 1, 2));
-            array2 = manager.ones(new Shape(2, 1, 2, 1, 2)).mul(2.2f);
+            array2 = manager.ones(new Shape(2, 1, 2, 1, 2)).times(2.2f);
             result = NDArrays.gte(array1, array2);
             expected =
                     manager.create(
@@ -432,7 +432,7 @@ public class NDArrayElementComparisonOpTest {
     public void testLesserThanOrEqualToNDArray() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array1 = manager.arange(10.0f);
-            NDArray array2 = manager.ones(new Shape(10)).mul(5);
+            NDArray array2 = manager.ones(new Shape(10)).times(5);
             NDArray result = NDArrays.lte(array1, array2);
             NDArray expected =
                     manager.create(
@@ -441,7 +441,7 @@ public class NDArrayElementComparisonOpTest {
                             });
             Assert.assertEquals(result, expected);
             array1 = manager.create(new float[] {2f, 3f, 4f, 5f}, new Shape(2, 2));
-            array2 = manager.arange(4.0f).add(1).reshape(1, 2, 2);
+            array2 = manager.arange(4.0f).plus(1).reshape(1, 2, 2);
             result = NDArrays.lte(array1, array2);
             expected =
                     manager.create(new boolean[] {false, false, false, false}, new Shape(1, 2, 2));
@@ -468,7 +468,7 @@ public class NDArrayElementComparisonOpTest {
     }
 
     @Test
-    public void testMaximumScalar() {
+    public void testMaxScalar() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array = manager.arange(10.0f);
             NDArray result = NDArrays.maximum(4f, array);
@@ -495,7 +495,7 @@ public class NDArrayElementComparisonOpTest {
     }
 
     @Test
-    public void testMaximumNDArray() {
+    public void testMaxNDArray() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array1 = manager.create(new float[] {1f, 2f, 3f, 4f, 5f});
             NDArray array2 = manager.create(new float[] {5f, 4f, 3f, 2f, 1f});
@@ -522,7 +522,7 @@ public class NDArrayElementComparisonOpTest {
             array1 = manager.create(3f);
             array2 = manager.create(new float[] {3f, 3f, 3f, 2f}, new Shape(2, 2));
             result = NDArrays.maximum(array1, array2);
-            expected = manager.ones(new Shape(2, 2)).mul(3);
+            expected = manager.ones(new Shape(2, 2)).times(3);
             Assert.assertEquals(result, expected);
 
             // test zero-dim with zero-dim
@@ -535,7 +535,7 @@ public class NDArrayElementComparisonOpTest {
     }
 
     @Test
-    public void testMinimumScalar() {
+    public void testMinScalar() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array = manager.arange(10.0f);
             NDArray result = NDArrays.minimum(4f, array);
@@ -562,7 +562,7 @@ public class NDArrayElementComparisonOpTest {
     }
 
     @Test
-    public void testMinimumNDArray() {
+    public void testMinNDArray() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array1 = manager.create(new float[] {1f, 2f, 3f, 4f, 5f});
             NDArray array2 = manager.create(new float[] {5f, 4f, 3f, 2f, 1f});
@@ -668,7 +668,7 @@ public class NDArrayElementComparisonOpTest {
 
             // test where examples in numpy website
             array1 = manager.arange(10.0f);
-            result = NDArrays.where(array1.lt(5), array1, array1.mul(10));
+            result = NDArrays.where(array1.lt(5), array1, array1.times(10));
             expected = manager.create(new float[] {0, 1, 2, 3, 4, 50, 60, 70, 80, 90});
             Assert.assertEquals(result, expected);
 

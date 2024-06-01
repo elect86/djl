@@ -77,11 +77,11 @@ public class LogMelSpectrogram implements AudioProcessor {
         NDArray window = manager.hanningWindow(N_FFT);
         NDArray stft = samples.stft(N_FFT, HOP_LENGTH, true, window, true);
         NDArray magnitudes = stft.get(":,:-1").abs().pow(2);
-        NDArray melSpec = melFilters.matMul(magnitudes);
+        NDArray melSpec = melFilters.matTimes(magnitudes);
         melSpec.attach(manager);
         NDArray logSpec = melSpec.clip(1e-10, Float.MAX_VALUE).log10();
-        logSpec = logSpec.maximum(logSpec.max().sub(8.0f));
-        logSpec = logSpec.add(4.0f).div(4.0f);
+        logSpec = logSpec.max(logSpec.max().minus(8.0f));
+        logSpec = logSpec.plus(4.0f).div(4.0f);
         return logSpec;
     }
 }

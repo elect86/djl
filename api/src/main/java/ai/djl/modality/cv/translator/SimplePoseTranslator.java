@@ -60,7 +60,7 @@ public class SimplePoseTranslator extends BaseImageTranslator<Joints> {
 
         NDArray result = maxIndices.tile(2, 2);
 
-        result.set(new NDIndex(":, :, 0"), result.get(":, :, 0").mod(width));
+        result.set(new NDIndex(":, :, 0"), result.get(":, :, 0").rem(width));
         result.set(new NDIndex(":, :, 1"), result.get(":, :, 1").div(width).floor());
         // TODO remove asType
         NDArray predMask =

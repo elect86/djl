@@ -362,7 +362,7 @@ public class NDArrayCreationOpTest {
             expected = manager.create(new float[] {10f, 9f, 8f, 7f, 6f, 5f, 4f, 3f, 2f, 1f});
             Assert.assertEquals(array, expected);
             array = manager.linspace(10, 10, 10);
-            expected = manager.ones(new Shape(10)).mul(10);
+            expected = manager.ones(new Shape(10)).times(10);
             Assert.assertEquals(array, expected);
 
             // test corner case
@@ -424,7 +424,7 @@ public class NDArrayCreationOpTest {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray normal = manager.randomNormal(new Shape(1000, 1000));
             NDArray mean = normal.mean();
-            NDArray std = normal.sub(mean).pow(2).mean();
+            NDArray std = normal.minus(mean).pow(2).mean();
             Assertions.assertAlmostEquals(mean.getFloat(), 0f, 2e-2f, 2e-2f);
             Assertions.assertAlmostEquals(std.getFloat(), 1f, 2e-2f, 2e-2f);
         }
@@ -474,7 +474,7 @@ public class NDArrayCreationOpTest {
             Assert.assertEquals(poisson.getShape(), new Shape(2, 1000, 1000));
 
             NDArray mean = poisson.mean(new int[] {1, 2});
-            NDArray std = poisson.transpose(1, 2, 0).sub(mean).pow(2).mean(new int[] {0, 1});
+            NDArray std = poisson.transpose(1, 2, 0).minus(mean).pow(2).mean(new int[] {0, 1});
 
             Assertions.assertAlmostEquals(mean.toFloatArray()[0], 1f, 2e-2f, 2e-2f);
             Assertions.assertAlmostEquals(mean.toFloatArray()[1], 8.5f, 2e-2f, 2e-2f);
@@ -496,7 +496,7 @@ public class NDArrayCreationOpTest {
             Assert.assertEquals(gamma.getShape(), new Shape(2, 1000, 1000));
 
             NDArray mean = gamma.mean(new int[] {1, 2});
-            NDArray std = gamma.transpose(1, 2, 0).sub(mean).pow(2).mean(new int[] {0, 1});
+            NDArray std = gamma.transpose(1, 2, 0).minus(mean).pow(2).mean(new int[] {0, 1});
 
             Assertions.assertAlmostEquals(mean.toFloatArray()[0], 0f, 2e-2f, 2e-2f);
             Assertions.assertAlmostEquals(mean.toFloatArray()[1], 1.75f, 2e-2f, 2e-2f);
@@ -517,7 +517,7 @@ public class NDArrayCreationOpTest {
             Assert.assertEquals(normal.getShape(), new Shape(2, 1000, 1000));
 
             NDArray mean = normal.mean(new int[] {1, 2});
-            NDArray std = normal.transpose(1, 2, 0).sub(mean).pow(2).mean(new int[] {0, 1});
+            NDArray std = normal.transpose(1, 2, 0).minus(mean).pow(2).mean(new int[] {0, 1});
 
             Assertions.assertAlmostEquals(mean.toFloatArray()[0], 0f, 2e-2f, 2e-2f);
             Assertions.assertAlmostEquals(mean.toFloatArray()[1], 2.5f, 2e-2f, 2e-2f);

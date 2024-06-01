@@ -43,7 +43,7 @@ public class MeanScaler extends Scaler {
         NDArray weights = inputs.get(1);
 
         NDArray totalWeight = weights.sum(new int[] {dim});
-        NDArray weightedSum = data.abs().mul(weights).sum(new int[] {dim});
+        NDArray weightedSum = data.abs().times(weights).sum(new int[] {dim});
 
         NDArray totalObserved = totalWeight.sum(new int[] {0});
         NDArray denominator = NDArrays.maximum(totalObserved, 1f);
@@ -58,7 +58,7 @@ public class MeanScaler extends Scaler {
                                 NDArrays.where(
                                         weightedSum.gt(weightedSum.zerosLike()),
                                         scale,
-                                        defaultScale.mul(totalWeight.onesLike())))
+                                        defaultScale.times(totalWeight.onesLike())))
                         .expandDims(dim);
 
         return new NDList(data.div(scale), keepDim ? scale : scale.squeeze(dim));

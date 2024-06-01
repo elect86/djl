@@ -41,7 +41,7 @@ public class PndmScheduler {
                                 (float) Math.sqrt(BETA_END),
                                 TRAIN_TIMESTEPS)
                         .square();
-        NDArray alphas = manager.ones(betas.getShape()).sub(betas);
+        NDArray alphas = manager.ones(betas.getShape()).minus(betas);
         alphasCumProd = alphas.cumProd(0);
         finalAlphaCumProd = alphasCumProd.get(0).toFloatArray()[0];
         ets = new NDList();
@@ -50,13 +50,13 @@ public class PndmScheduler {
     public NDArray addNoise(NDArray latent, NDArray noise, int timesteps) {
         float alphaProd = alphasCumProd.get(timesteps).toFloatArray()[0];
         float sqrtOneMinusAlphaProd = (float) Math.sqrt(1 - alphaProd);
-        latent = latent.mul(alphaProd).add(noise.mul(sqrtOneMinusAlphaProd));
+        latent = latent.times(alphaProd).plus(noise.times(sqrtOneMinusAlphaProd));
         return latent;
     }
 
     public void initTimesteps(int inferenceSteps, int offset) {
         stepSize = TRAIN_TIMESTEPS / inferenceSteps;
-        NDArray timestepsNd = manager.arange(0, inferenceSteps).mul(stepSize).add(offset);
+        NDArray timestepsNd = manager.arange(0, inferenceSteps).times(stepSize).plus(offset);
 
         // np.concatenate([self._timesteps[:-1], self._timesteps[-2:-1],
         // self._timesteps[-1:]])[::-1]
@@ -83,25 +83,25 @@ public class PndmScheduler {
         if (ets.size() == 1 && counter == 0) {
             curSample = sample;
         } else if (ets.size() == 1 && counter == 1) {
-            modelOutput = modelOutput.add(ets.get(0)).div(2);
+            modelOutput = modelOutput.plus(ets.get(0)).div(2);
             sample = curSample;
         } else if (ets.size() == 2) {
-            NDArray firstModel = ets.get(ets.size() - 1).mul(3);
-            NDArray secondModel = ets.get(ets.size() - 2).mul(-1);
-            modelOutput = firstModel.add(secondModel);
+            NDArray firstModel = ets.get(ets.size() - 1).times(3);
+            NDArray secondModel = ets.get(ets.size() - 2).times(-1);
+            modelOutput = firstModel.plus(secondModel);
             modelOutput = modelOutput.div(2);
         } else if (ets.size() == 3) {
-            NDArray firstModel = ets.get(ets.size() - 1).mul(23);
-            NDArray secondModel = ets.get(ets.size() - 2).mul(-16);
-            NDArray thirdModel = ets.get(ets.size() - 3).mul(5);
-            modelOutput = firstModel.add(secondModel).add(thirdModel);
+            NDArray firstModel = ets.get(ets.size() - 1).times(23);
+            NDArray secondModel = ets.get(ets.size() - 2).times(-16);
+            NDArray thirdModel = ets.get(ets.size() - 3).times(5);
+            modelOutput = firstModel.plus(secondModel).plus(thirdModel);
             modelOutput = modelOutput.div(12);
         } else {
-            NDArray firstModel = ets.get(ets.size() - 1).mul(55);
-            NDArray secondModel = ets.get(ets.size() - 2).mul(-59);
-            NDArray thirdModel = ets.get(ets.size() - 3).mul(37);
-            NDArray fourthModel = ets.get(ets.size() - 4).mul(-9);
-            modelOutput = firstModel.add(secondModel).add(thirdModel).add(fourthModel);
+            NDArray firstModel = ets.get(ets.size() - 1).times(55);
+            NDArray secondModel = ets.get(ets.size() - 2).times(-59);
+            NDArray thirdModel = ets.get(ets.size() - 3).times(37);
+            NDArray fourthModel = ets.get(ets.size() - 4).times(-9);
+            modelOutput = firstModel.plus(secondModel).plus(thirdModel).plus(fourthModel);
             modelOutput = modelOutput.div(24);
         }
 
@@ -139,8 +139,8 @@ public class PndmScheduler {
                 alphaProdT * (float) Math.sqrt(betaProdTPrev)
                         + (float) Math.sqrt(alphaProdT * betaProdT * alphaProdTPrev);
 
-        sample = sample.mul(sampleCoeff);
-        modelOutput = modelOutput.mul(alphaProdTPrev - alphaProdT).div(modelOutputCoeff).neg();
-        return sample.add(modelOutput);
+        sample = sample.times(sampleCoeff);
+        modelOutput = modelOutput.times(alphaProdTPrev - alphaProdT).div(modelOutputCoeff).unaryMinus();
+        return sample.plus(modelOutput);
     }
 }

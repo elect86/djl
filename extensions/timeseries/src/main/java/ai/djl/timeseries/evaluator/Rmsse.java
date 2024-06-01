@@ -67,9 +67,9 @@ public class Rmsse extends Evaluator {
                 distributionOutput.distributionBuilder().setDistrArgs(predictions).build().mean();
 
         checkLabelShapes(label, prediction);
-        NDArray meanSquare = label.sub(prediction).square().mean(new int[] {axis});
+        NDArray meanSquare = label.minus(prediction).square().mean(new int[] {axis});
         NDArray scaleDenom =
-                label.get(":, 1:").sub(label.get(":, :-1")).square().mean(new int[] {axis});
+                label.get(":, 1:").minus(label.get(":, :-1")).square().mean(new int[] {axis});
 
         NDArray rmsse = meanSquare.div(scaleDenom).sqrt();
         rmsse = NDArrays.where(scaleDenom.eq(0), rmsse.onesLike(), rmsse);

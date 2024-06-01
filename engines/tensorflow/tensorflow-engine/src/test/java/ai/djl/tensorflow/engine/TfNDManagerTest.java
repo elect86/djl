@@ -50,9 +50,9 @@ public class TfNDManagerTest {
             final NDArray b = array;
             float[] expected = {2, 3};
             if (array.getDevice().isGpu()) {
-                Assert.assertThrows(UnsupportedOperationException.class, () -> b.set(expected));
+                Assert.assertThrows(UnsupportedOperationException.class, () -> b.setFrom(expected));
             } else {
-                array.set(expected);
+                array.setFrom(expected);
                 Assert.assertEquals(array.toFloatArray(), expected);
             }
 

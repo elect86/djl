@@ -51,13 +51,13 @@ public class DistributionLoss extends Loss {
             builder.optLoc(predictions.get("loc"));
         }
 
-        NDArray loss = builder.build().logProb(labels.singletonOrThrow()).mul(-1);
+        NDArray loss = builder.build().logProb(labels.singletonOrThrow()).times(-1);
 
         if (predictions.contains("loss_weights")) {
             NDArray lossWeights = predictions.get("loss_weights");
             NDArray weightedValue =
-                    NDArrays.where(lossWeights.neq(0), loss.mul(lossWeights), loss.zerosLike());
-            NDArray sumWeights = lossWeights.sum().maximum(1.);
+                    NDArrays.where(lossWeights.neq(0), loss.times(lossWeights), loss.zerosLike());
+            NDArray sumWeights = lossWeights.sum().max(1.);
             loss = weightedValue.sum().div(sumWeights);
         }
         return loss;

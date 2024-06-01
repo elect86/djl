@@ -190,7 +190,7 @@ public abstract class BaseNDManager implements NDManager {
             dist[i] = sample;
         }
 
-        return create(dist).muli(scale).addi(loc).reshape(shape).toType(dataType, false);
+        return create(dist).timesInP(scale).plusInP(loc).reshape(shape).toType(dataType, false);
     }
 
     /** {@inheritDoc} */

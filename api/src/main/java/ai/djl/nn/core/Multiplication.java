@@ -36,7 +36,7 @@ import java.util.Collections;
  * <p>Similar to a {@link LinearCollection}, multiple split dimensions are supported but they remain
  * optional (i.e. \(t\) can be zero). Other differences to a {@link Linear} block are that the
  * weight has an additional dimension of size 1 interspersed (to broadcast the weight to every input
- * of the batch when applying the internally used algebraic operation {@link NDArray#mul(NDArray)} )
+ * of the batch when applying the internally used algebraic operation {@link NDArray#times(NDArray)} )
  * and that biases are not supported.
  *
  * <p>Caution: the output-channel is the left-most dimension as opposed to traditionally being the
@@ -149,7 +149,7 @@ public class Multiplication extends AbstractBlock {
      * @return element-wise multiplication of input and weight using broadcasting rules
      */
     public NDList multiply(NDArray input, NDArray weight) {
-        NDArray resultArr = input.mul(weight);
+        NDArray resultArr = input.times(weight);
         return new NDList(resultArr);
     }
 

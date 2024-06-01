@@ -201,7 +201,7 @@ public final class BertBlock extends AbstractBlock {
         // add empty dimension to multiply with broadcasted ones
         NDArray mask3D = mask.toType(DataType.FLOAT32, false).reshape(batchSize, 1, toSeqLength);
 
-        return broadcastOnes.matMul(mask3D);
+        return broadcastOnes.matTimes(mask3D);
     }
 
     /** {@inheritDoc} */
@@ -227,7 +227,7 @@ public final class BertBlock extends AbstractBlock {
         // the tensor is automagically "broadcast" i.e. repeated in the batch dimension. That
         // gives us the result we want: every embedding gets the same position embedding added
         // to it)
-        NDArray embedding = embeddedTokens.add(embeddedTypes).add(embeddedPositions);
+        NDArray embedding = embeddedTokens.plus(embeddedTypes).plus(embeddedPositions);
         // Apply normalization
         NDList normalizedEmbedding = embeddingNorm.forward(ps, new NDList(embedding), training);
         NDList dropoutEmbedding = embeddingDropout.forward(ps, normalizedEmbedding, training);
@@ -238,9 +238,9 @@ public final class BertBlock extends AbstractBlock {
                 attentionMask
                         .reshape(maskShape.get(0), 1, maskShape.get(1), maskShape.get(2))
                         .toType(DataType.FLOAT32, false)
-                        .mul(-1f) // turn 1 into -1
-                        .add(1f) // turn 0s to 1s, -1s to 0s
-                        .mul(-100000f); // turn 1s (original 0s) into -100000
+                        .times(-1f) // turn 1 into -1
+                        .plus(1f) // turn 0s to 1s, -1s to 0s
+                        .times(-100000f); // turn 1s (original 0s) into -100000
         // Run through all transformer blocks
         NDList lastOutput = dropoutEmbedding;
         initScope.ret(lastOutput);

@@ -43,9 +43,9 @@ public class TabNetRegressionLoss extends Loss {
         // sparseLoss is already calculated inside the forward of tabNet
         // so here we just need to get it out from prediction
         return labels.singletonOrThrow()
-                .sub(predictions.get(0))
+                .minus(predictions.get(0))
                 .square()
                 .mean()
-                .add(predictions.get(1).mean());
+                .plus(predictions.get(1).mean());
     }
 }

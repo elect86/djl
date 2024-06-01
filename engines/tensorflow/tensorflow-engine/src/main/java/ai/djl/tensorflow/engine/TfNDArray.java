@@ -188,7 +188,7 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public void set(Buffer buffer) {
+    public void setFrom(Buffer buffer) {
         if (getDevice().isGpu()) {
             // TODO: Implement set for GPU
             throw new UnsupportedOperationException("GPU Tensor cannot be modified after creation");
@@ -546,43 +546,43 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray add(Number n) {
+    public NDArray plus(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return add(number);
+            return plus(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray add(NDArray other) {
+    public NDArray plus(NDArray other) {
         return manager.opExecutor("Add").addInput(this).addInput(other).buildSingletonOrThrow();
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray sub(Number n) {
+    public NDArray minus(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return sub(number);
+            return minus(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray sub(NDArray other) {
+    public NDArray minus(NDArray other) {
         return manager.opExecutor("Sub").addInput(this).addInput(other).buildSingletonOrThrow();
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray mul(Number n) {
+    public NDArray times(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return mul(number);
+            return times(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray mul(NDArray other) {
+    public NDArray times(NDArray other) {
         return manager.opExecutor("Mul").addInput(this).addInput(other).buildSingletonOrThrow();
     }
 
@@ -602,15 +602,15 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray mod(Number n) {
+    public NDArray rem(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return mod(number);
+            return rem(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray mod(NDArray other) {
+    public NDArray rem(NDArray other) {
         return manager.opExecutor("Mod").addInput(this).addInput(other).buildSingletonOrThrow();
     }
 
@@ -630,43 +630,43 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray maximum(Number n) {
+    public NDArray max(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return maximum(number);
+            return max(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray maximum(NDArray other) {
+    public NDArray max(NDArray other) {
         return manager.opExecutor("Maximum").addInput(this).addInput(other).buildSingletonOrThrow();
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray minimum(Number n) {
+    public NDArray min(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return minimum(number);
+            return min(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray minimum(NDArray other) {
+    public NDArray min(NDArray other) {
         return manager.opExecutor("Minimum").addInput(this).addInput(other).buildSingletonOrThrow();
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray addi(Number n) {
+    public NDArray plusInP(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return addi(number);
+            return plusInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray addi(NDArray other) {
+    public NDArray plusInP(NDArray other) {
         TFE_TensorHandle newHandle =
                 manager.opExecutor("Add").addInput(this).addInput(other).buildRawPointer(1)[0];
         setHandle(newHandle);
@@ -675,15 +675,15 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray subi(Number n) {
+    public NDArray minusInP(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return subi(number);
+            return minusInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray subi(NDArray other) {
+    public NDArray minusInP(NDArray other) {
         TFE_TensorHandle newHandle =
                 manager.opExecutor("Sub").addInput(this).addInput(other).buildRawPointer(1)[0];
         setHandle(newHandle);
@@ -692,15 +692,15 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray muli(Number n) {
+    public NDArray timesInP(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return muli(number);
+            return timesInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray muli(NDArray other) {
+    public NDArray timesInP(NDArray other) {
         TFE_TensorHandle newHandle =
                 manager.opExecutor("Mul").addInput(this).addInput(other).buildRawPointer(1)[0];
         setHandle(newHandle);
@@ -709,15 +709,15 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray divi(Number n) {
+    public NDArray divInP(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return divi(number);
+            return divInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray divi(NDArray other) {
+    public NDArray divInP(NDArray other) {
         TFE_TensorHandle newHandle =
                 manager.opExecutor("Div").addInput(this).addInput(other).buildRawPointer(1)[0];
         setHandle(newHandle);
@@ -732,15 +732,15 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray modi(Number n) {
+    public NDArray remInP(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return modi(number);
+            return remInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray modi(NDArray other) {
+    public NDArray remInP(NDArray other) {
         TFE_TensorHandle newHandle =
                 manager.opExecutor("Mod").addInput(this).addInput(other).buildRawPointer(1)[0];
         setHandle(newHandle);
@@ -749,15 +749,15 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray powi(Number n) {
+    public NDArray powInP(Number n) {
         try (NDArray number = manager.create(n).toType(getDataType(), false)) {
-            return powi(number);
+            return powInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray powi(NDArray other) {
+    public NDArray powInP(NDArray other) {
         TFE_TensorHandle newHandle =
                 manager.opExecutor("Pow").addInput(this).addInput(other).buildRawPointer(1)[0];
         setHandle(newHandle);
@@ -772,7 +772,7 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray signi() {
+    public NDArray signInP() {
         TFE_TensorHandle newHandle =
                 manager.opExecutor("Sign").addInput(this).buildRawPointer(1)[0];
         setHandle(newHandle);
@@ -781,13 +781,13 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray neg() {
+    public NDArray unaryMinus() {
         return manager.opExecutor("Neg").addInput(this).buildSingletonOrThrow();
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray negi() {
+    public NDArray unaryMinusInP() {
         TFE_TensorHandle newHandle = manager.opExecutor("Neg").addInput(this).buildRawPointer(1)[0];
         setHandle(newHandle);
         return this;
@@ -962,13 +962,13 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
     /** {@inheritDoc} */
     @Override
     public NDArray toDegrees() {
-        return mul(180).div(Math.PI);
+        return times(180).div(Math.PI);
     }
 
     /** {@inheritDoc} */
     @Override
     public NDArray toRadians() {
-        return mul(Math.PI).div(180);
+        return times(Math.PI).div(180);
     }
 
     /** {@inheritDoc} */
@@ -1264,12 +1264,12 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
     /** {@inheritDoc} */
     @Override
     public NDArray logicalXor(NDArray n) {
-        return logicalOr(n).logicalAnd(logicalAnd(n).logicalNot());
+        return logicalOr(n).logicalAnd(logicalAnd(n).not());
     }
 
     /** {@inheritDoc} */
     @Override
-    public NDArray logicalNot() {
+    public NDArray not() {
         try (NDArray input = toType(DataType.BOOLEAN, true)) {
             return manager.opExecutor("LogicalNot").addInput(input).buildSingletonOrThrow();
         }
@@ -1329,7 +1329,7 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
                 outputs =
                         subManager
                                 .opExecutor("TopKV2")
-                                .addInput(input.neg())
+                                .addInput(input.unaryMinus())
                                 .addInput(kArr)
                                 .build(2);
             } else {
@@ -1345,7 +1345,7 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
             }
             // re-apply neg after sort if ascending
             if (ascending && !returnIndices) {
-                result = result.neg();
+                result = result.unaryMinus();
             }
             attach(subManager.getParentManager());
             result.attach(subManager.getParentManager());
@@ -1529,7 +1529,7 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
 
     /** {@inheritDoc} */
     @Override
-    public NDArray matMul(NDArray other) {
+    public NDArray matTimes(NDArray other) {
         if (isScalar() || other.isScalar()) {
             throw new IllegalArgumentException("scalar is not allowed for matMul()");
         }
@@ -1571,7 +1571,7 @@ public class TfNDArray extends NativeResource<TFE_TensorHandle> implements NDArr
     }
 
     @Override
-    public NDArray batchMatMul(NDArray other) {
+    public NDArray batchMatTimes(NDArray other) {
         throw new UnsupportedOperationException();
     }
 

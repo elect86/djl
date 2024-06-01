@@ -35,7 +35,7 @@ import java.util.Collections;
  * {@link Linear} block, the involved shapes have typically one split dimension added which
  * separates the different linear transformations from each other. Another difference to a {@link
  * Linear} block is that the weight is not transposed (to align with the internally used algebraic
- * operation {@link NDArray#matMul(NDArray)} ).
+ * operation {@link NDArray#matTimes(NDArray)} ).
  *
  * <p>It has the following shapes:
  *
@@ -181,9 +181,9 @@ public class LinearCollection extends AbstractBlock {
             reverseShiftBatchAxis[0] = dim - 2;
         }
         NDArray resultArr =
-                input.transpose(shiftBatchAxis).matMul(weight).transpose(reverseShiftBatchAxis);
+                input.transpose(shiftBatchAxis).matTimes(weight).transpose(reverseShiftBatchAxis);
         if (bias != null) {
-            resultArr.addi(bias);
+            resultArr.plusInP(bias);
         }
         return new NDList(resultArr);
     }

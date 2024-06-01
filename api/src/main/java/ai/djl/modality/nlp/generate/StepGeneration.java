@@ -64,7 +64,7 @@ public final class StepGeneration {
         topkHiddenStates = topkHiddenStates.normalize(2, 2);
         contextHiddenStates = contextHiddenStates.normalize(2, 2);
         NDArray cosSimilarity =
-                topkHiddenStates.batchMatMul(contextHiddenStates.transpose(0, 2, 1));
+                topkHiddenStates.batchMatTimes(contextHiddenStates.transpose(0, 2, 1));
 
         // Deactivate entries (batch_idx, :, zero_attention_idx_slice) in max{cosSim} step
         long[] offSetsArray = offSets.toLongArray();
@@ -77,7 +77,7 @@ public final class StepGeneration {
         assert topkScorePart1.getShape().getShape().length == 2 : "Wrong output size";
         // [batch, logitDim].gather([batch, topK) -> [batch, topK]
         NDArray topkScorePart2 = logits.softmax(1).gather(topKIds, 1);
-        NDArray topkScore = topkScorePart2.muli(1 - alpha).subi(topkScorePart1.muli(alpha));
+        NDArray topkScore = topkScorePart2.timesInP(1 - alpha).minusInP(topkScorePart1.timesInP(alpha));
 
         // [batch, topK] => [batch, 1]
         NDArray select = topkScore.argMax(1);
@@ -132,7 +132,7 @@ public final class StepGeneration {
         // [batch, beamSource] -> [batch, beamSource, 1]
         lastProbs = lastProbs.reshape(numBatch, numBeam, 1);
         // [batch, beamSource, beamChild]
-        NDArray newProbs = stepProbs.muli(lastProbs);
+        NDArray newProbs = stepProbs.timesInP(lastProbs);
 
         // Argmax over the (beamSource * beamChild) dimension
         topK =

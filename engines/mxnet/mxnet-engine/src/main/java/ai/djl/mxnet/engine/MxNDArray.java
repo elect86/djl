@@ -28,6 +28,7 @@ import ai.djl.util.NativeResource;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -36,7 +37,9 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-/** {@code MxNDArray} is the MXNet implementation of {@link NDArray}. */
+/**
+ * {@code MxNDArray} is the MXNet implementation of {@link NDArray}.
+ */
 public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
 
     private String name;
@@ -54,11 +57,11 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
      * Constructs an MxNDArray from a native handle and metadata (internal. Use {@link NDManager}
      * instead).
      *
-     * @param manager the manager to attach the new array to
-     * @param handle the pointer to the native MxNDArray memory
-     * @param device the device the new array will be located on
-     * @param shape the shape of the new array
-     * @param dataType the dataType of the new array
+     * @param manager     the manager to attach the new array to
+     * @param handle      the pointer to the native MxNDArray memory
+     * @param device      the device the new array will be located on
+     * @param shape       the shape of the new array
+     * @param dataType    the dataType of the new array
      * @param hasGradient the gradient status of the new array
      */
     MxNDArray(
@@ -83,7 +86,7 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
      * Constructs an MxNDArray from a native handle (internal. Use {@link NDManager} instead).
      *
      * @param manager the manager to attach the new array to
-     * @param handle the pointer to the native MxNDArray memory
+     * @param handle  the pointer to the native MxNDArray memory
      */
     MxNDArray(MxNDManager manager, Pointer handle) {
         super(handle);
@@ -97,33 +100,41 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
      * Constructs a sparse MxNDArray from a native handle (internal. Use {@link NDManager} instead).
      *
      * @param manager the manager to attach the new array to
-     * @param handle the pointer to the native MxNDArray memory
-     * @param fmt the sparse format
+     * @param handle  the pointer to the native MxNDArray memory
+     * @param fmt     the sparse format
      */
     MxNDArray(MxNDManager manager, Pointer handle, SparseFormat fmt) {
         this(manager, handle);
         this.sparseFormat = fmt;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MxNDManager getManager() {
         return manager;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return name;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataType getDataType() {
         if (dataType == null) {
@@ -132,7 +143,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return dataType;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Device getDevice() {
         if (device == null) {
@@ -141,7 +154,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return device;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Shape getShape() {
         if (shape == null) {
@@ -150,7 +165,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return shape;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SparseFormat getSparseFormat() {
         if (sparseFormat == null) {
@@ -159,7 +176,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return sparseFormat;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void attach(NDManager manager) {
         detach();
@@ -167,7 +186,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         manager.attachInternal(getUid(), this);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void returnResource(NDManager manager) {
         detach();
@@ -175,7 +196,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         manager.attachUncappedInternal(getUid(), this);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void tempAttach(NDManager manager) {
         NDManager original = this.manager;
@@ -184,7 +207,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         manager.tempAttachInternal(original, getUid(), this);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void detach() {
         manager.detachInternal(getUid());
@@ -200,7 +225,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return array;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray toDevice(Device device, boolean copy) {
         if (device.equals(getDevice()) && !copy) {
@@ -209,7 +236,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return duplicate(getManager(), getShape(), getDataType(), device, getName());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray toType(DataType dataType, boolean copy) {
         if (dataType.equals(getDataType()) && !copy) {
@@ -222,13 +251,15 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
      * Computes the gradients of the NDArray w.r.t variables.
      *
      * @param retainGraph whether to retain the computation graph for another backward pass on the
-     *     same graph. By default, the computation history is cleared.
+     *                    same graph. By default, the computation history is cleared.
      */
     public void backward(boolean retainGraph) {
         JnaUtils.autogradBackward(new NDList(this), retainGraph ? 1 : 0);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRequiresGradient(boolean requiresGrad) {
         if ((requiresGrad && hasGradient()) || (!requiresGrad && !hasGradient())) {
@@ -251,7 +282,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray getGradient() {
         if (!hasGradient()) {
@@ -263,7 +296,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.create(pointer);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasGradient() {
         if (hasGradient == null) {
@@ -273,20 +308,26 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return hasGradient;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray stopGradient() {
         Pointer pointer = JnaUtils.detachGradient(getHandle());
         return manager.create(pointer);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] toStringArray(Charset charset) {
         throw new UnsupportedOperationException("String NDArray is not supported!");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ByteBuffer toByteBuffer(boolean tryDirect) {
         if (getSparseFormat() != SparseFormat.DENSE) {
@@ -302,9 +343,11 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return bb;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void set(Buffer buffer) {
+    public void setFrom(Buffer buffer) {
         int size = Math.toIntExact(size());
         DataType type = getDataType();
         BaseNDManager.validateBuffer(buffer, type, size);
@@ -318,20 +361,26 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         JnaUtils.syncCopyFromCPU(getHandle(), bb, size);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray gather(NDArray index, int axis) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray gatherNd(NDArray index) {
         MxOpParams params = new MxOpParams();
         return manager.invoke("gather_nd", new NDList(this, index), params).singletonOrThrow();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray take(NDManager manager, NDArray index) {
         MxOpParams params = new MxOpParams();
@@ -339,23 +388,29 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("take", new NDList(this.flatten(), index), params).singletonOrThrow();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray put(NDArray index, NDArray value) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray scatter(NDArray index, NDArray value, int axis) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void copyTo(NDArray ndArray) {
         if (!(ndArray instanceof MxNDArray)) {
-            ndArray.set(toByteBuffer());
+            ndArray.setFrom(toByteBuffer());
             return;
         }
         Shape inShape = getShape();
@@ -364,10 +419,12 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
             throw new IllegalArgumentException(
                     "shape are diff. Required: " + destShape + ", Actual " + inShape);
         }
-        manager.invoke("_npi_copyto", new NDArray[] {this}, new NDArray[] {ndArray}, null);
+        manager.invoke("_npi_copyto", new NDArray[]{this}, new NDArray[]{ndArray}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray booleanMask(NDArray index, int axis) {
         if (isScalar() || index.isScalar()) {
@@ -383,17 +440,19 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         MxOpParams params = new MxOpParams();
         params.addParam("axis", axis);
         try (NDArray reshaped = this.reshape(reshape);
-                NDArray reshapedIndex = index.toType(DataType.INT32, false).reshape(-1);
-                NDArray result =
-                        manager.invoke(
-                                "_npi_boolean_mask",
-                                new NDArray[] {reshaped, reshapedIndex},
-                                params)) {
+             NDArray reshapedIndex = index.toType(DataType.INT32, false).reshape(-1);
+             NDArray result =
+                     manager.invoke(
+                             "_npi_boolean_mask",
+                             new NDArray[]{reshaped, reshapedIndex},
+                             params)) {
             return result.reshape(reshape);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sequenceMask(NDArray sequenceLength, float value) {
         if (getShape().dimension() < 2 || getShape().isScalar() || getShape().hasZeroDimension()) {
@@ -412,13 +471,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npx_sequence_mask", mask, params).head();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sequenceMask(NDArray sequenceLength) {
         return sequenceMask(sequenceLength, 0);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean contentEquals(Number number) {
         if (number == null || getDataType().isBoolean()) {
@@ -430,7 +493,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean contentEquals(NDArray other) {
         if (other == null || (!shapeEquals(other))) {
@@ -445,7 +510,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray eq(Number n) {
         MxOpParams params = new MxOpParams();
@@ -453,14 +520,18 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_equal_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray eq(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_equal", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_equal", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray neq(Number other) {
         MxOpParams params = new MxOpParams();
@@ -468,14 +539,18 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_not_equal_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray neq(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_not_equal", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_not_equal", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray gt(Number other) {
         MxOpParams params = new MxOpParams();
@@ -483,14 +558,18 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_greater_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray gt(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_greater", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_greater", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray gte(Number other) {
         MxOpParams params = new MxOpParams();
@@ -498,14 +577,18 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_greater_equal_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray gte(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_greater_equal", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_greater_equal", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray lt(Number other) {
         MxOpParams params = new MxOpParams();
@@ -513,14 +596,18 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_less_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray lt(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_less", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_less", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray lte(Number other) {
         MxOpParams params = new MxOpParams();
@@ -528,59 +615,75 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_less_equal_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray lte(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_less_equal", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_less_equal", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray add(Number n) {
+    public NDArray plus(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
         return manager.invoke("_npi_add_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray add(NDArray other) {
+    public NDArray plus(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_add", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_add", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray sub(Number n) {
+    public NDArray minus(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
         return manager.invoke("_npi_subtract_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray sub(NDArray other) {
+    public NDArray minus(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_subtract", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_subtract", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray mul(Number n) {
+    public NDArray times(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
         return manager.invoke("_npi_multiply_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray mul(NDArray other) {
+    public NDArray times(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_multiply", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_multiply", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray toSparse(SparseFormat fmt) {
         if (fmt != SparseFormat.DENSE
@@ -600,7 +703,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("cast_storage", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray div(Number n) {
         MxOpParams params = new MxOpParams();
@@ -608,29 +713,37 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_true_divide_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray div(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_true_divide", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_true_divide", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray mod(Number n) {
+    public NDArray rem(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
         return manager.invoke("_npi_mod_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray mod(NDArray other) {
+    public NDArray rem(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_mod", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_mod", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray pow(Number n) {
         MxOpParams params = new MxOpParams();
@@ -638,348 +751,529 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_power_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray pow(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_power", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_power", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray addi(Number n) {
+    public void plusAssign(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
-        manager.invoke("_npi_add_scalar", new NDArray[] {this}, new NDArray[] {this}, params);
+        manager.invoke("_npi_add_scalar", new NDArray[]{this}, new NDArray[]{this}, params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray plusInP(Number n) {
+        plusAssign(n);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray addi(NDArray other) {
+    public void plusAssign(NDArray other) {
         other = manager.from(other);
-        manager.invoke("_npi_add", new NDArray[] {this, other}, new NDArray[] {this}, null);
+        manager.invoke("_npi_add", new NDArray[]{this, other}, new NDArray[]{this}, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray plusInP(NDArray other) {
+        plusAssign(other);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray subi(Number n) {
+    public void minusAssign(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
-        manager.invoke("_npi_subtract_scalar", new NDArray[] {this}, new NDArray[] {this}, params);
+        manager.invoke("_npi_subtract_scalar", new NDArray[]{this}, new NDArray[]{this}, params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray minusInP(Number n) {
+        minusAssign(n);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray subi(NDArray other) {
+    public void minusAssign(NDArray other) {
         other = manager.from(other);
-        manager.invoke("_npi_subtract", new NDArray[] {this, other}, new NDArray[] {this}, null);
+        manager.invoke("_npi_subtract", new NDArray[]{this, other}, new NDArray[]{this}, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray minusInP(NDArray other) {
+        minusAssign(other);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray muli(Number n) {
+    public void timesAssign(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
-        manager.invoke("_npi_multiply_scalar", new NDArray[] {this}, new NDArray[] {this}, params);
+        manager.invoke("_npi_multiply_scalar", new NDArray[]{this}, new NDArray[]{this}, params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray timesInP(Number n) {
+        timesAssign(n);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray muli(NDArray other) {
+    public void timesAssign(NDArray other) {
         other = manager.from(other);
-        manager.invoke("_npi_multiply", new NDArray[] {this, other}, new NDArray[] {this}, null);
+        manager.invoke("_npi_multiply", new NDArray[]{this, other}, new NDArray[]{this}, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray timesInP(NDArray other) {
+        timesAssign(other);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray divi(Number n) {
+    public void divAssign(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
-        manager.invoke(
-                "_npi_true_divide_scalar", new NDArray[] {this}, new NDArray[] {this}, params);
+        manager.invoke("_npi_true_divide_scalar", new NDArray[]{this}, new NDArray[]{this}, params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray divInP(Number n) {
+        divAssign(n);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray divi(NDArray other) {
+    public void divAssign(NDArray other) {
         other = manager.from(other);
-        manager.invoke("_npi_true_divide", new NDArray[] {this, other}, new NDArray[] {this}, null);
+        manager.invoke("_npi_true_divide", new NDArray[]{this, other}, new NDArray[]{this}, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray divInP(NDArray other) {
+        divAssign(other);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray modi(Number n) {
+    public void remAssign(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
-        manager.invoke("_npi_mod_scalar", new NDArray[] {this}, new NDArray[] {this}, params);
+        manager.invoke("_npi_mod_scalar", new NDArray[]{this}, new NDArray[]{this}, params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray remInP(Number n) {
+        remAssign(n);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray modi(NDArray other) {
+    public void remAssign(NDArray other) {
         other = manager.from(other);
-        manager.invoke("_npi_mod", new NDArray[] {this, other}, new NDArray[] {this}, null);
+        manager.invoke("_npi_mod", new NDArray[]{this, other}, new NDArray[]{this}, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NDArray remInP(NDArray other) {
+        remAssign(other);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray powi(Number n) {
+    public NDArray powInP(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
-        manager.invoke("_npi_power_scalar", new NDArray[] {this}, new NDArray[] {this}, params);
+        manager.invoke("_npi_power_scalar", new NDArray[]{this}, new NDArray[]{this}, params);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray powi(NDArray other) {
+    public NDArray powInP(NDArray other) {
         other = manager.from(other);
-        manager.invoke("_npi_power", new NDArray[] {this, other}, new NDArray[] {this}, null);
+        manager.invoke("_npi_power", new NDArray[]{this, other}, new NDArray[]{this}, null);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray neg() {
+    public NDArray unaryMinus() {
         return manager.invoke("_npi_negative", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray negi() {
-        manager.invoke("_npi_negative", new NDArray[] {this}, new NDArray[] {this}, null);
+    public NDArray unaryMinusInP() {
+        manager.invoke("_npi_negative", new NDArray[]{this}, new NDArray[]{this}, null);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sign() {
         return manager.invoke("_npi_sign", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray signi() {
-        manager.invoke("_npi_sign", new NDArray[] {this}, new NDArray[] {this}, null);
+    public NDArray signInP() {
+        manager.invoke("_npi_sign", new NDArray[]{this}, new NDArray[]{this}, null);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray abs() {
         return manager.invoke("_npi_absolute", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray square() {
         return manager.invoke("_npi_square", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sqrt() {
         return manager.invoke("_npi_sqrt", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray cbrt() {
         return manager.invoke("_npi_cbrt", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray floor() {
         return manager.invoke("_npi_floor", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray ceil() {
         return manager.invoke("_npi_ceil", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray round() {
         return manager.invoke("round", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray trunc() {
         return manager.invoke("_npi_trunc", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray exp() {
         return manager.invoke("_npi_exp", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray gammaln() {
         return manager.invoke("gammaln", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray log() {
         return manager.invoke("_npi_log", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray log10() {
         return manager.invoke("_npi_log10", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray log2() {
         return manager.invoke("_npi_log2", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sin() {
         return manager.invoke("_npi_sin", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray cos() {
         return manager.invoke("_npi_cos", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray tan() {
         return manager.invoke("_npi_tan", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray asin() {
         return manager.invoke("_npi_arcsin", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray acos() {
         return manager.invoke("_npi_arccos", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray atan() {
         return manager.invoke("_npi_arctan", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray atan2(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_arctan2", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_arctan2", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sinh() {
         return manager.invoke("_npi_sinh", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray cosh() {
         return manager.invoke("_npi_cosh", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray tanh() {
         return manager.invoke("_npi_tanh", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray asinh() {
         return manager.invoke("_npi_arcsinh", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray acosh() {
         return manager.invoke("_npi_arccosh", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray atanh() {
         return manager.invoke("_npi_arctanh", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray toDegrees() {
         return manager.invoke("_npi_degrees", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray toRadians() {
         return manager.invoke("_npi_radians", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray maximum(Number n) {
+    public NDArray max(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
         return manager.invoke("_npi_maximum_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray maximum(NDArray other) {
+    public NDArray max(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_maximum", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_maximum", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray minimum(Number n) {
+    public NDArray min(Number n) {
         MxOpParams params = new MxOpParams();
         params.add("scalar", n.toString());
         return manager.invoke("_npi_minimum_scalar", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray minimum(NDArray other) {
+    public NDArray min(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npi_minimum", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_minimum", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray max() {
         return manager.invoke("_np_max", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray max(int[] axes) {
         MxOpParams params = new MxOpParams();
@@ -987,7 +1281,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_max", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray max(int[] axes, boolean keepDims) {
         MxOpParams params = new MxOpParams();
@@ -996,13 +1292,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_max", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray min() {
         return manager.invoke("_np_min", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray min(int[] axes, boolean keepDims) {
         MxOpParams params = new MxOpParams();
@@ -1011,7 +1311,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_min", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sum() {
         // TODO current windows doesn't support boolean NDArray
@@ -1035,7 +1337,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return array;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sum(int[] axes, boolean keepDims) {
         MxOpParams params = new MxOpParams();
@@ -1044,25 +1348,33 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_sum", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray cumProd(int axis) {
         throw new UnsupportedOperationException("Not supported by MXNet");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray cumProd(int axis, DataType dataType) {
         throw new UnsupportedOperationException("Not supported by MXNet");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray prod() {
         return manager.invoke("_np_prod", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray prod(int[] axes, boolean keepDims) {
         MxOpParams params = new MxOpParams();
@@ -1071,13 +1383,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_prod", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray mean() {
         return manager.invoke("_npi_mean", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray mean(int[] axes, boolean keepDims) {
         MxOpParams params = new MxOpParams();
@@ -1086,13 +1402,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_mean", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray normalize(double p, long dim, double eps) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray rotate90(int times, int[] axes) {
         if (axes.length != 2) {
@@ -1104,7 +1424,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_rot90", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray trace(int offset, int axis1, int axis2) {
         MxOpParams params = new MxOpParams();
@@ -1114,7 +1436,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_trace", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDList split(long[] indices, int axis) {
         if (indices.length == 0) {
@@ -1134,25 +1458,33 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_split", new NDList(this), params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray flatten() {
         return reshape(new Shape(Math.toIntExact(size())));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray flatten(int startDim, int endDim) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray fft(long length, long axis) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray stft(
             long nFft,
@@ -1164,19 +1496,25 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray fft2(long[] sizes, long[] axes) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray ifft2(long[] sizes, long[] axes) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray reshape(Shape shape) {
         MxOpParams params = new MxOpParams();
@@ -1184,7 +1522,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_reshape", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray expandDims(int axis) {
         MxOpParams params = new MxOpParams();
@@ -1192,13 +1532,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_expand_dims", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray squeeze() {
         return manager.invoke("_np_squeeze", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray squeeze(int[] axes) {
         if (axes.length == 0) {
@@ -1209,13 +1553,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_squeeze", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDList unique(Integer dim, boolean sorted, boolean returnInverse, boolean returnCounts) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray logicalAnd(NDArray other) {
         // TODO switch to numpy op, although current op support zero-dim, scalar
@@ -1226,11 +1574,13 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
                         ? other.toType(DataType.INT32, false)
                         : other;
         other = manager.from(other);
-        return manager.invoke("broadcast_logical_and", new NDArray[] {thisArr, other}, null)
+        return manager.invoke("broadcast_logical_and", new NDArray[]{thisArr, other}, null)
                 .toType(DataType.BOOLEAN, false);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray logicalOr(NDArray other) {
         // TODO switch to numpy op, although current op support zero-dim, scalar
@@ -1241,11 +1591,13 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
                         ? other.toType(DataType.INT32, false)
                         : other;
         other = manager.from(other);
-        return manager.invoke("broadcast_logical_or", new NDArray[] {thisArr, other}, null)
+        return manager.invoke("broadcast_logical_or", new NDArray[]{thisArr, other}, null)
                 .toType(DataType.BOOLEAN, false);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray logicalXor(NDArray other) {
         // TODO switch to numpy op, although current op support zero-dim, scalar
@@ -1256,17 +1608,21 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
                         ? other.toType(DataType.INT32, false)
                         : other;
         other = manager.from(other);
-        return manager.invoke("broadcast_logical_xor", new NDArray[] {thisArr, other}, null)
+        return manager.invoke("broadcast_logical_xor", new NDArray[]{thisArr, other}, null)
                 .toType(DataType.BOOLEAN, false);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray logicalNot() {
+    public NDArray not() {
         return manager.invoke("_npi_logical_not", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray argSort(int axis, boolean ascending) {
         MxOpParams params = new MxOpParams();
@@ -1277,7 +1633,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_argsort", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sort(int axis) {
         MxOpParams params = new MxOpParams();
@@ -1285,13 +1643,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_sort", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray sort() {
         return manager.invoke("_npi_sort", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray softmax(int axis) {
         // MXNet softmax op bug on GPU
@@ -1303,7 +1665,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npx_softmax", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray logSoftmax(int axis) {
         // MXNet logsoftmax op bug on GPU
@@ -1315,13 +1679,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npx_log_softmax", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray cumSum() {
         return manager.invoke("_np_cumsum", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray cumSum(int axis) {
         MxOpParams params = new MxOpParams();
@@ -1329,7 +1697,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_cumsum", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void intern(NDArray replaced) {
         MxNDArray arr = (MxNDArray) replaced;
@@ -1340,25 +1710,33 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         arr.close();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray isInfinite() {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray inverse() {
         return manager.invoke("inverse", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray isNaN() {
         return manager.invoke("_npi_isnan", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray toDense() {
         if (!isSparse()) {
@@ -1367,7 +1745,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return castStorage(SparseFormat.DENSE);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray tile(long repeats) {
         // zero-dim
@@ -1381,7 +1761,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return tile(repeatsArray);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray tile(int axis, long repeats) {
         // scalar
@@ -1394,7 +1776,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return tile(repeatsArray);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray tile(long[] repeats) {
         MxOpParams params = new MxOpParams();
@@ -1402,13 +1786,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_tile", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray tile(Shape desiredShape) {
         return tile(repeatsToMatchShape(desiredShape));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray repeat(long repeats) {
         // zero-dim
@@ -1422,7 +1810,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return repeat(repeatsArray);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray repeat(int axis, long repeats) {
         long[] repeatsArray = new long[getShape().dimension()];
@@ -1431,7 +1821,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return repeat(repeatsArray);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray repeat(long[] repeats) {
         // TODO get rid of for loop once bug in MXNet np.repeat is fixed
@@ -1452,42 +1844,54 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return array;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray repeat(Shape desiredShape) {
         return repeat(repeatsToMatchShape(desiredShape));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray dot(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_np_dot", new NDArray[] {this, other}, null);
+        return manager.invoke("_np_dot", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray matMul(NDArray other) {
+    public NDArray matTimes(NDArray other) {
         if (isScalar() || other.isScalar()) {
             throw new IllegalArgumentException("scalar is not allowed for matMul()");
         }
         other = manager.from(other);
-        return manager.invoke("_npi_matmul", new NDArray[] {this, other}, null);
+        return manager.invoke("_npi_matmul", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public NDArray batchMatMul(NDArray other) {
+    public NDArray batchMatTimes(NDArray other) {
         throw new UnsupportedOperationException();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray xlogy(NDArray other) {
         throw new UnsupportedOperationException();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray clip(Number min, Number max) {
         MxOpParams params = new MxOpParams();
@@ -1496,7 +1900,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_clip", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray swapAxes(int axis1, int axis2) {
         MxOpParams params = new MxOpParams();
@@ -1505,7 +1911,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_swapaxes", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray flip(int... axes) {
         MxOpParams params = new MxOpParams();
@@ -1513,13 +1921,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_flip", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray transpose() {
         return manager.invoke("_np_transpose", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray transpose(int... dimensions) {
         if (Arrays.stream(dimensions).anyMatch(d -> d < 0)) {
@@ -1538,7 +1950,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_np_transpose", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray broadcast(Shape shape) {
         MxOpParams params = new MxOpParams();
@@ -1546,7 +1960,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_broadcast_to", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray argMax() {
         if (isEmpty()) {
@@ -1555,7 +1971,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_argmax", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray argMax(int axis) {
         MxOpParams params = new MxOpParams();
@@ -1563,13 +1981,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_argmax", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDList topK(int k, int axis, boolean largest, boolean sorted) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray argMin() {
         if (isEmpty()) {
@@ -1578,7 +2000,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_argmin", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray argMin(int axis) {
         MxOpParams params = new MxOpParams();
@@ -1586,31 +2010,41 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_argmin", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray percentile(Number percentile) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray percentile(Number percentile, int[] dimension) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray median() {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray median(int[] axes) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray nonzero() {
         NDArray thisArr =
@@ -1618,19 +2052,25 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npx_nonzero", thisArr, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray erfinv() {
         return manager.invoke("erfinv", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray erf() {
         return manager.invoke("erf", this, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray norm(boolean keepDims) {
         MxOpParams params = new MxOpParams();
@@ -1639,7 +2079,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_norm", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray norm(int ord, int[] axes, boolean keepDims) {
         MxOpParams params = new MxOpParams();
@@ -1649,7 +2091,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npi_norm", this, params);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray oneHot(int depth, float onValue, float offValue, DataType dataType) {
         MxOpParams params = new MxOpParams();
@@ -1660,26 +2104,34 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return manager.invoke("_npx_one_hot", this, params).toType(dataType, false);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray batchDot(NDArray other) {
         other = manager.from(other);
-        return manager.invoke("_npx_batch_dot", new NDArray[] {this, other}, null);
+        return manager.invoke("_npx_batch_dot", new NDArray[]{this, other}, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray complex() {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArray real() {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NDArrayEx getNDArrayInternal() {
         return mxNDArrayEx;
@@ -1710,25 +2162,33 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return Math.floorMod(axis, getShape().dimension());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void waitToRead() {
         JnaUtils.waitToRead(getHandle());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void waitToWrite() {
         JnaUtils.waitToWrite(getHandle());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void waitAll() {
         JnaUtils.waitToRead(getHandle());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof NDArray) {
@@ -1737,13 +2197,17 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return 0;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         if (isReleased()) {
@@ -1752,7 +2216,9 @@ public class MxNDArray extends NativeResource<Pointer> implements LazyNDArray {
         return toDebugString();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         onClose();

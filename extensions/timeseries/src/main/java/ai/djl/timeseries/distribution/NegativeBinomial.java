@@ -39,16 +39,16 @@ public final class NegativeBinomial extends Distribution {
     @Override
     public NDArray logProb(NDArray target) {
         NDArray logUnnormalizedProb =
-                totalCount.mul(logSigmoid(logits.mul(-1))).add(target.mul(logSigmoid(logits)));
+                totalCount.times(logSigmoid(logits.times(-1))).plus(target.times(logSigmoid(logits)));
 
         NDArray logNormalization =
                 totalCount
-                        .add(target)
+                        .plus(target)
                         .gammaln()
-                        .mul(-1)
-                        .add(target.add(1).gammaln())
-                        .add(totalCount.gammaln());
-        return logUnnormalizedProb.sub(logNormalization);
+                        .times(-1)
+                        .plus(target.plus(1).gammaln())
+                        .plus(totalCount.gammaln());
+        return logUnnormalizedProb.minus(logNormalization);
     }
 
     /** {@inheritDoc} */
@@ -66,11 +66,11 @@ public final class NegativeBinomial extends Distribution {
     /** {@inheritDoc} */
     @Override
     public NDArray mean() {
-        return totalCount.mul(logits.exp());
+        return totalCount.times(logits.exp());
     }
 
     private NDArray logSigmoid(NDArray x) {
-        return x.mul(-1).exp().add(1).getNDArrayInternal().rdiv(1).log();
+        return x.times(-1).exp().plus(1).getNDArrayInternal().rdiv(1).log();
     }
 
     /**
@@ -97,7 +97,7 @@ public final class NegativeBinomial extends Distribution {
             // integers. Instead we scale the parameters.
             if (scale != null) {
                 NDArray logits = distrArgs.get("logits");
-                logits.add(scale.log());
+                logits.plus(scale.log());
                 logits.setName("logits");
                 distrArgs.remove("logits");
                 distrArgs.add(logits);

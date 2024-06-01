@@ -50,7 +50,7 @@ public class BoundingBoxError extends Evaluator {
                         new NDList(anchors, labels.head(), classPredictions.transpose(0, 2, 1)));
         NDArray boundingBoxLabels = targets.get(0);
         NDArray boundingBoxMasks = targets.get(1);
-        return boundingBoxLabels.sub(boundingBoxPredictions).mul(boundingBoxMasks).abs();
+        return boundingBoxLabels.minus(boundingBoxPredictions).times(boundingBoxMasks).abs();
     }
 
     /** {@inheritDoc} */

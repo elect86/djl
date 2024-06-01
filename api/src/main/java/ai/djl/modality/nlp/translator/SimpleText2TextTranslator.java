@@ -119,6 +119,6 @@ public class SimpleText2TextTranslator implements Translator<String, String> {
 
     private NDArray get(NDManager manager) {
         return manager.ones(new Shape(1))
-                .mul(sourceEmbedding.preprocessTextToEmbed(Collections.singletonList("<pad>"))[0]);
+                .times(sourceEmbedding.preprocessTextToEmbed(Collections.singletonList("<pad>"))[0]);
     }
 }

@@ -64,7 +64,7 @@ public class LinearSpecgram implements AudioProcessor {
         samples = NDArrays.stack(windowList);
 
         NDArray weighting = manager.hanningWindow(windowSize);
-        samples.muli(weighting);
+        samples.timesInP(weighting);
         NDList fftList = new NDList();
         for (int row = 0; row < rows; row++) {
             fftList.add(fft(samples.get(row)));
@@ -74,17 +74,17 @@ public class LinearSpecgram implements AudioProcessor {
         fft = fft.pow(2);
 
         weighting = weighting.pow(2);
-        NDArray scale = weighting.sum().mul(this.sampleRate);
+        NDArray scale = weighting.sum().times(this.sampleRate);
 
         NDArray middle = fft.get("1:-1,:");
-        middle = middle.mul(2).div(scale);
+        middle = middle.times(2).div(scale);
         NDArray head = fft.get("0,:").div(scale).reshape(1, fft.getShape().get(1));
         NDArray tail = fft.get("-1,:").div(scale).reshape(1, fft.getShape().get(1));
         NDList list = new NDList(head, middle, tail);
         fft = NDArrays.concat(list, 0);
 
         NDArray freqsArray = manager.arange(fft.getShape().get(0));
-        freqsArray = freqsArray.mul(this.sampleRate / windowSize);
+        freqsArray = freqsArray.times(this.sampleRate / windowSize);
 
         float[] freqs = freqsArray.toFloatArray();
         int ind = 0;
@@ -97,7 +97,7 @@ public class LinearSpecgram implements AudioProcessor {
         }
         ind = ind + 1;
 
-        fft = fft.get(":" + ind + ",:").add(EPS);
+        fft = fft.get(":" + ind + ",:").plus(EPS);
         fft = fft.log();
 
         return fft;

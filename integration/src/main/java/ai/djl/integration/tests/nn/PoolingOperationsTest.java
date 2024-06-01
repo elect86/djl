@@ -275,7 +275,7 @@ public class PoolingOperationsTest {
                 NDArray data = manager.ones(new Shape(2, 2, 2));
                 data.set(new NDIndex(1, 1, 1), 2);
                 NDArray expected = manager.ones(new Shape(2, 2, 1));
-                expected.muli(2);
+                expected.timesInP(2);
                 expected.set(new NDIndex(1, 1, 0), 3);
                 NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
                 Assert.assertEquals(result, expected);
@@ -294,7 +294,7 @@ public class PoolingOperationsTest {
                 NDArray data = manager.ones(new Shape(2, 2, 2, 2));
                 data.set(new NDIndex(1, 1, 1, 1), 2);
                 NDArray expected = manager.ones(new Shape(2, 2, 1, 1));
-                expected.muli(4);
+                expected.timesInP(4);
                 expected.set(new NDIndex(1, 1, 0, 0), 5);
                 NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
                 Assert.assertEquals(result, expected);
@@ -314,7 +314,7 @@ public class PoolingOperationsTest {
                 NDArray data = manager.ones(new Shape(2, 2, 2, 2, 2));
                 data.set(new NDIndex(1, 1, 1, 1, 1), 2);
                 NDArray expected = manager.ones(new Shape(2, 2, 1, 1, 1));
-                expected.muli(8);
+                expected.timesInP(8);
                 expected.set(new NDIndex(1, 1, 0, 0, 0), 9);
                 NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
                 Assert.assertEquals(result, expected);
@@ -333,7 +333,7 @@ public class PoolingOperationsTest {
                 NDArray data = manager.ones(new Shape(2, 2, 2));
                 data.set(new NDIndex(1, 1, 1), 2);
                 NDArray expected = manager.ones(new Shape(2, 2));
-                expected.muli(2);
+                expected.timesInP(2);
                 expected.set(new NDIndex(1, 1), 3);
                 NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
                 Assert.assertEquals(result, expected);
@@ -352,7 +352,7 @@ public class PoolingOperationsTest {
                 NDArray data = manager.ones(new Shape(2, 2, 2, 2));
                 data.set(new NDIndex(1, 1, 1, 1), 2);
                 NDArray expected = manager.ones(new Shape(2, 2));
-                expected.muli(4);
+                expected.timesInP(4);
                 expected.set(new NDIndex(1, 1), 5);
                 NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
                 Assert.assertEquals(result, expected);
@@ -371,7 +371,7 @@ public class PoolingOperationsTest {
                 NDArray data = manager.ones(new Shape(2, 2, 2, 2, 2));
                 data.set(new NDIndex(1, 1, 1, 1, 1), 2);
                 NDArray expected = manager.ones(new Shape(2, 2));
-                expected.muli(8);
+                expected.timesInP(8);
                 expected.set(new NDIndex(1, 1), 9);
                 NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
                 Assert.assertEquals(result, expected);

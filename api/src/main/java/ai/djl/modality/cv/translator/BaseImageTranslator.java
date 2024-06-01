@@ -198,7 +198,7 @@ public abstract class BaseImageTranslator<T> implements Translator<Image, T> {
             if ("0,1".equals(range)) {
                 addTransform(a -> a.div(255f));
             } else if ("-1,1".equals(range)) {
-                addTransform(a -> a.div(128f).sub(1));
+                addTransform(a -> a.div(128f).minus(1));
             }
             if (arguments.containsKey("batchifier")) {
                 batchifier = Batchifier.fromString((String) arguments.get("batchifier"));

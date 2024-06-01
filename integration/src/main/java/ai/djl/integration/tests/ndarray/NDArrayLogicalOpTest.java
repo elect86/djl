@@ -168,21 +168,21 @@ public class NDArrayLogicalOpTest {
     }
 
     @Test
-    public void testLogicalNot() {
+    public void testNot() {
         try (NDManager manager = NDManager.newBaseManager(TestUtils.getEngine())) {
             NDArray array = manager.create(new float[] {-2f, 0f, 1f});
             NDArray expected = manager.create(new boolean[] {false, true, false});
-            Assertions.assertAlmostEquals(array.logicalNot(), expected);
+            Assertions.assertAlmostEquals(array.not(), expected);
             array = manager.create(new float[] {1f, 2f, -1f, -2f}, new Shape(2, 2));
             expected = manager.create(new boolean[] {false, false, false, false}, new Shape(2, 2));
-            Assertions.assertAlmostEquals(array.logicalNot(), expected);
+            Assertions.assertAlmostEquals(array.not(), expected);
             // test scalar
             array = manager.create(0f);
             expected = manager.create(true);
-            Assert.assertEquals(array.logicalNot(), expected);
+            Assert.assertEquals(array.not(), expected);
             // test zero-dim
             array = manager.create(new Shape(0, 0, 1));
-            Assert.assertEquals(array.logicalNot(), array.toType(DataType.BOOLEAN, false));
+            Assert.assertEquals(array.not(), array.toType(DataType.BOOLEAN, false));
         }
     }
 }

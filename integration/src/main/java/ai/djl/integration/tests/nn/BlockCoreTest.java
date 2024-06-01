@@ -88,7 +88,7 @@ public class BlockCoreTest {
                 NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
                 NDArray expected =
                         data.dot(manager.ones(new Shape(outSize, 2)).transpose())
-                                .add(manager.zeros(new Shape(2, outSize)));
+                                .plus(manager.zeros(new Shape(2, outSize)));
                 Assert.assertEquals(result, expected);
 
                 testEncode(manager, block);
@@ -154,7 +154,7 @@ public class BlockCoreTest {
                 NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
                 NDArray expected =
                         data.dot(manager.ones(new Shape(outSize, 2)).transpose())
-                                .add(manager.zeros(new Shape(2, outSize)));
+                                .plus(manager.zeros(new Shape(2, outSize)));
                 Assert.assertEquals(result, expected);
 
                 testEncode(manager, block);
@@ -237,9 +237,9 @@ public class BlockCoreTest {
                     expectedLabelsForLinearCollection =
                             dataForLinearCollection
                                     .transpose(1, 0, 2)
-                                    .matMul(expectedWeightForLinearCollection)
+                                    .matTimes(expectedWeightForLinearCollection)
                                     .transpose(1, 0, 2)
-                                    .add(expectedBiasForLinearCollection);
+                                    .plus(expectedBiasForLinearCollection);
                     Assert.assertEquals(expectedLabelsForLinearCollection, actualLabels);
 
                     testEncode(manager, block);
@@ -278,7 +278,7 @@ public class BlockCoreTest {
                         Assert.assertEquals(expectedWeight, actualWeight);
                         Assert.assertEquals(expectedBias, actualBias);
                         NDArray expectedLabels =
-                                data.dot(expectedWeight.transpose()).add(expectedBias);
+                                data.dot(expectedWeight.transpose()).plus(expectedBias);
                         Assert.assertEquals(expectedLabels, actualLabels);
                         Assert.assertEquals(
                                 expectedLabelsForLinearCollection
@@ -319,9 +319,9 @@ public class BlockCoreTest {
                     Assert.assertEquals(expectedBias, actualBias);
                     NDArray expectedLabels =
                             data.transpose(1, 2, 3, 0, 4)
-                                    .matMul(expectedWeight)
+                                    .matTimes(expectedWeight)
                                     .transpose(3, 0, 1, 2, 4)
-                                    .add(expectedBias);
+                                    .plus(expectedBias);
                     Assert.assertEquals(expectedLabels, actualLabels);
                     Assert.assertEquals(
                             expectedLabelsForLinearCollection.reshape(
@@ -366,7 +366,7 @@ public class BlockCoreTest {
                     NDManager manager = trainer.getManager();
                     NDArray data = manager.create(dataArr);
                     NDArray result = trainer.forward(new NDList(data)).singletonOrThrow();
-                    NDArray expected = data.mul(manager.create(weightArr).expandDims(1));
+                    NDArray expected = data.times(manager.create(weightArr).expandDims(1));
                     Assert.assertEquals(result, expected);
 
                     testEncode(manager, block);
@@ -1010,7 +1010,7 @@ public class BlockCoreTest {
                 new DefaultTrainingConfig(Loss.l2Loss())
                         .optInitializer(Initializer.ONES, Parameter.Type.WEIGHT);
         SequentialBlock block = new SequentialBlock();
-        block.addSingleton(x -> x.mul(6.5f));
+        block.addSingleton(x -> x.times(6.5f));
         block.add(Linear.builder().setUnits(10).build());
         block.add(Linear.builder().setUnits(5).build());
 

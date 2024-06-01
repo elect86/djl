@@ -92,7 +92,7 @@ public class BufferedImageFactory extends ImageFactory {
         } else if (shape.get(0) == 1 || shape.get(2) == 1) {
             throw new UnsupportedOperationException("Grayscale image is not supported");
         }
-        int[] raw = array.toType(DataType.UINT8, false).toUint8Array();
+        byte[] raw = array.toType(DataType.UINT8, false).toUint8Array();
         if (NDImageUtils.isCHW(shape)) {
             int height = (int) shape.get(1);
             int width = (int) shape.get(2);

@@ -1,6 +1,17 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     ai.djl.javaProject
     ai.djl.publish
+    embeddedKotlin("jvm")
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+        // for default methods on interfaces
+        freeCompilerArgs = listOf("-Xjvm-default=all")
+    }
 }
 
 dependencies {

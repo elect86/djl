@@ -39,7 +39,7 @@ public class AudioNormalizer implements AudioProcessor {
         gain = Math.min(gain, MAX_GAIN_DB);
 
         float factor = (float) Math.pow(10f, gain / 20f);
-        samples = samples.mul(factor);
+        samples = samples.times(factor);
         return samples;
     }
 }

@@ -204,7 +204,7 @@ public class TextEmbeddingTranslator implements Translator<String, float[]> {
         attentionMask = attentionMask.expandDims(-1).broadcast(shape);
         NDArray inputAttentionMaskSum = attentionMask.sum(AXIS);
         NDArray clamp = inputAttentionMaskSum.clip(1e-9f, 1e12f);
-        NDArray prod = embeddings.mul(attentionMask);
+        NDArray prod = embeddings.times(attentionMask);
         NDArray sum = prod.sum(AXIS);
         if (sqrt) {
             return sum.div(clamp.sqrt());
@@ -227,9 +227,9 @@ public class TextEmbeddingTranslator implements Translator<String, float[]> {
         NDArray weight = embeddings.getManager().arange(1, shape[0] + 1);
         weight = weight.expandDims(-1).broadcast(shape);
 
-        attentionMask = attentionMask.expandDims(-1).broadcast(shape).mul(weight);
+        attentionMask = attentionMask.expandDims(-1).broadcast(shape).times(weight);
         NDArray maskSum = attentionMask.sum(AXIS);
-        NDArray embeddingSum = embeddings.mul(attentionMask).sum(AXIS);
+        NDArray embeddingSum = embeddings.times(attentionMask).sum(AXIS);
         return embeddingSum.div(maskSum);
     }
 

@@ -23,6 +23,7 @@ import ai.djl.ndarray.types.DataType;
 import ai.djl.ndarray.types.Shape;
 import ai.djl.ndarray.types.SparseFormat;
 import ai.djl.util.NativeResource;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -216,7 +217,7 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public void set(Buffer buffer) {
+    public void setFrom(Buffer buffer) {
         int size = Math.toIntExact(size());
         DataType type = getDataType();
         BaseNDManager.validateBuffer(buffer, type, size);
@@ -471,16 +472,17 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
     }
 
     /** {@inheritDoc} */
+    @NotNull
     @Override
-    public RsNDArray add(Number n) {
+    public RsNDArray plus(@NotNull Number n) {
         try (NDArray number = manager.create(n)) {
-            return add(number);
+            return plus(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray add(NDArray other) {
+    public RsNDArray plus(NDArray other) {
         try (NDScope ignore = new NDScope()) {
             return toArray(RustLibrary.add(getHandle(), manager.from(other).getHandle()), true);
         }
@@ -488,15 +490,15 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray sub(Number n) {
+    public RsNDArray minus(Number n) {
         try (NDArray number = manager.create(n)) {
-            return sub(number);
+            return minus(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray sub(NDArray other) {
+    public RsNDArray minus(NDArray other) {
         try (NDScope ignore = new NDScope()) {
             return toArray(RustLibrary.sub(getHandle(), manager.from(other).getHandle()), true);
         }
@@ -504,15 +506,15 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray mul(Number n) {
+    public RsNDArray times(Number n) {
         try (NDArray number = manager.create(n)) {
-            return mul(number);
+            return times(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray mul(NDArray other) {
+    public RsNDArray times(NDArray other) {
         try (NDScope ignore = new NDScope()) {
             return toArray(RustLibrary.mul(getHandle(), manager.from(other).getHandle()), true);
         }
@@ -536,15 +538,15 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray mod(Number n) {
+    public RsNDArray rem(Number n) {
         try (NDArray number = manager.create(n)) {
-            return mod(number);
+            return rem(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray mod(NDArray other) {
+    public RsNDArray rem(NDArray other) {
         try (NDScope ignore = new NDScope()) {
             long otherHandle = manager.from(other).getHandle();
             return toArray(RustLibrary.remainder(getHandle(), otherHandle), true);
@@ -580,105 +582,105 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray addi(Number n) {
+    public RsNDArray plusInP(Number n) {
         try (NDArray number = manager.create(n)) {
-            return addi(number);
+            return plusInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray addi(NDArray other) {
-        intern(add(other));
+    public RsNDArray plusInP(NDArray other) {
+        intern(plus(other));
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray subi(Number n) {
+    public RsNDArray minusInP(Number n) {
         try (NDArray number = manager.create(n)) {
-            return subi(number);
+            return minusInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray subi(NDArray other) {
-        intern(sub(other));
+    public RsNDArray minusInP(NDArray other) {
+        intern(minus(other));
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray muli(Number n) {
+    public RsNDArray timesInP(Number n) {
         try (NDArray number = manager.create(n)) {
-            return muli(number);
+            return timesInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray muli(NDArray other) {
-        intern(mul(other));
+    public RsNDArray timesInP(NDArray other) {
+        intern(times(other));
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray divi(Number n) {
+    public RsNDArray divInP(Number n) {
         try (NDArray number = manager.create(n)) {
-            return divi(number);
+            return divInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray divi(NDArray other) {
+    public RsNDArray divInP(NDArray other) {
         intern(div(other));
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray modi(Number n) {
+    public RsNDArray remInP(Number n) {
         try (NDArray number = manager.create(n)) {
-            return modi(number);
+            return remInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray modi(NDArray other) {
-        intern(mod(other));
+    public RsNDArray remInP(NDArray other) {
+        intern(rem(other));
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray powi(Number n) {
+    public RsNDArray powInP(Number n) {
         try (NDArray number = manager.create(n)) {
-            return powi(number);
+            return powInP(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray powi(NDArray other) {
+    public RsNDArray powInP(NDArray other) {
         intern(pow(other));
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray signi() {
+    public RsNDArray signInP() {
         intern(sign());
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray negi() {
-        intern(neg());
+    public RsNDArray unaryMinusInP() {
+        intern(unaryMinus());
         return this;
     }
 
@@ -690,15 +692,15 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray maximum(Number n) {
+    public RsNDArray max(Number n) {
         try (NDArray number = manager.create(n)) {
-            return maximum(number);
+            return max(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray maximum(NDArray other) {
+    public RsNDArray max(NDArray other) {
         try (NDScope ignore = new NDScope()) {
             return toArray(RustLibrary.maximum(getHandle(), manager.from(other).getHandle()), true);
         }
@@ -706,15 +708,15 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray minimum(Number n) {
+    public RsNDArray min(Number n) {
         try (NDArray number = manager.create(n)) {
-            return minimum(number);
+            return min(number);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray minimum(NDArray other) {
+    public RsNDArray min(NDArray other) {
         try (NDScope ignore = new NDScope()) {
             return toArray(RustLibrary.minimum(getHandle(), manager.from(other).getHandle()), true);
         }
@@ -765,7 +767,7 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray neg() {
+    public RsNDArray unaryMinus() {
         return toArray(RustLibrary.neg(getHandle()));
     }
 
@@ -933,13 +935,13 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
     /** {@inheritDoc} */
     @Override
     public RsNDArray toDegrees() {
-        return mul(180.0).div(Math.PI);
+        return times(180.0).div(Math.PI);
     }
 
     /** {@inheritDoc} */
     @Override
     public RsNDArray toRadians() {
-        return mul(Math.PI).div(180.0);
+        return times(Math.PI).div(180.0);
     }
 
     /** {@inheritDoc} */
@@ -1186,7 +1188,7 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public RsNDArray logicalNot() {
+    public RsNDArray not() {
         return toArray(RustLibrary.logicalNot(getHandle()));
     }
 
@@ -1375,7 +1377,7 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public NDArray matMul(NDArray other) {
+    public NDArray matTimes(NDArray other) {
         if (getShape().dimension() < 2 || getShape().dimension() < 2) {
             throw new IllegalArgumentException("only 2d tensors are supported for matMul()");
         }
@@ -1387,7 +1389,7 @@ public class RsNDArray extends NativeResource<Long> implements NDArray {
 
     /** {@inheritDoc} */
     @Override
-    public NDArray batchMatMul(NDArray other) {
+    public NDArray batchMatTimes(NDArray other) {
         if (getShape().dimension() != 3 || getShape().dimension() != 3) {
             throw new IllegalArgumentException("only 3d tensors are allowed for batchMatMul()");
         }

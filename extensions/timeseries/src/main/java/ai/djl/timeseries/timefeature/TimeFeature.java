@@ -42,7 +42,7 @@ public final class TimeFeature {
      */
     public static NDArray secondOfMinute(NDManager manager, List<LocalDateTime> index) {
         float[] data = getFeature(index, LocalDateTime::getSecond);
-        return manager.create(data).divi(59f).subi(0.5);
+        return manager.create(data).divInP(59f).minusInP(0.5);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class TimeFeature {
      */
     public static NDArray minuteOfHour(NDManager manager, List<LocalDateTime> index) {
         float[] data = getFeature(index, LocalDateTime::getMinute);
-        return manager.create(data).divi(59f).subi(0.5);
+        return manager.create(data).divInP(59f).minusInP(0.5);
     }
 
     /**
@@ -66,7 +66,7 @@ public final class TimeFeature {
      */
     public static NDArray hourOfDay(NDManager manager, List<LocalDateTime> index) {
         float[] data = getFeature(index, LocalDateTime::getHour);
-        return manager.create(data).divi(23f).subi(0.5);
+        return manager.create(data).divInP(23f).minusInP(0.5);
     }
 
     /**
@@ -78,7 +78,7 @@ public final class TimeFeature {
      */
     public static NDArray dayOfWeek(NDManager manager, List<LocalDateTime> index) {
         float[] data = getFeature(index, a -> a.getDayOfWeek().ordinal());
-        return manager.create(data).divi(6f).subi(0.5);
+        return manager.create(data).divInP(6f).minusInP(0.5);
     }
 
     /**
@@ -90,7 +90,7 @@ public final class TimeFeature {
      */
     public static NDArray dayOfMonth(NDManager manager, List<LocalDateTime> index) {
         float[] data = getFeature(index, LocalDateTime::getDayOfMonth);
-        return manager.create(data).subi(1f).divi(30f).subi(0.5f);
+        return manager.create(data).minusInP(1f).divInP(30f).minusInP(0.5f);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class TimeFeature {
      */
     public static NDArray dayOfYear(NDManager manager, List<LocalDateTime> index) {
         float[] data = getFeature(index, LocalDateTime::getDayOfYear);
-        return manager.create(data).subi(1f).divi(365f).subi(0.5f);
+        return manager.create(data).minusInP(1f).divInP(365f).minusInP(0.5f);
     }
 
     /**
@@ -114,7 +114,7 @@ public final class TimeFeature {
      */
     public static NDArray monthOfYear(NDManager manager, List<LocalDateTime> index) {
         float[] data = getFeature(index, LocalDateTime::getMonthValue);
-        return manager.create(data).subi(1f).divi(11f).subi(0.5);
+        return manager.create(data).minusInP(1f).divInP(11f).minusInP(0.5);
     }
 
     /**
@@ -126,7 +126,7 @@ public final class TimeFeature {
      */
     public static NDArray weekOfYear(NDManager manager, List<LocalDateTime> index) {
         float[] data = getFeature(index, a -> a.get(ChronoField.ALIGNED_WEEK_OF_YEAR));
-        return manager.create(data).sub(1f).div(52f).sub(0.5f);
+        return manager.create(data).minus(1f).div(52f).minus(0.5f);
     }
 
     private static float[] getFeature(

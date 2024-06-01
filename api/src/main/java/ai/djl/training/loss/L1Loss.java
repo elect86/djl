@@ -55,10 +55,10 @@ public class L1Loss extends Loss {
     public NDArray evaluate(NDList label, NDList prediction) {
         NDArray pred = prediction.singletonOrThrow();
         NDArray labelReshaped = label.singletonOrThrow().reshape(pred.getShape());
-        NDArray loss = labelReshaped.sub(pred).abs();
+        NDArray loss = labelReshaped.minus(pred).abs();
         if (weight != 1) {
             // avoid broadcast mul
-            loss = labelReshaped.mul(weight);
+            loss = labelReshaped.times(weight);
         }
         return loss.mean();
     }
