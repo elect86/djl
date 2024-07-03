@@ -151,7 +151,7 @@ interface NDArray : NDResource, BytesSupplier {
      *
      * @param requiresGrad if `NDArray` requires gradient or not
      */
-    fun setRequiresGradient(requiresGrad: Boolean)
+    fun setRequiresGradient(requiresGrad: Boolean = true)
 
     /**
      * Returns the gradient `NDArray` attached to this `NDArray`.
@@ -337,6 +337,8 @@ interface NDArray : NDResource, BytesSupplier {
         return ByteArray(bb.remaining()).also(bb::get)
     }
 
+    fun toUint8Array_(): ByteArray = toUint8Array().toByteArray()
+
     /**
      * Converts this `NDArray` to an uint8 array.
      *
@@ -345,10 +347,7 @@ interface NDArray : NDResource, BytesSupplier {
      */
     fun toUint8Array(): UByteArray {
         val bb = toByteBuffer(true)
-        // TODO, for some reasons, `UByteArray` will trigger in `:compileJava`, so we add a trail `.toByteArray()`
-        // error: cannot find symbol
-        //        byte[] raw = array.toType(DataType.UINT8, false).toUint8Array();
-        return UByteArray(bb.remaining()) { bb.get().toUByte() }/*.toByteArray()*/
+        return UByteArray(bb.remaining()) { bb.get().toUByte() }
     }
 
     /**
@@ -457,6 +456,15 @@ interface NDArray : NDResource, BytesSupplier {
         nDArrayInternal.getIndexer(manager)[this, index] = value
     }
 
+    /** [djl.kt]
+     * Sets the specified index in this `NDArray` with the given values.
+     *
+     * @param index the locations to update
+     * @param value the value to replace with. Can broadcast if given smaller dimensions than the
+     * index
+     */
+    operator fun set(index: String, value: NDArray) = set(NDIndex(index), value)
+
     /**
      * Sets the specified index in this `NDArray` with the given value.
      *
@@ -488,6 +496,14 @@ interface NDArray : NDResource, BytesSupplier {
         val array = this[index]
         this[index] = function.apply(array)
     }
+
+    /**
+     * Sets the `NDArray` by boolean mask or integer index.
+     *
+     * @param index the boolean or integer `NDArray` that indicates what to get
+     * @param value the value to replace with
+     */
+    operator fun set(index: String, value: Number) = set(NDIndex(index), value)
 
     /**
      * Sets the `NDArray` by boolean mask or integer index.

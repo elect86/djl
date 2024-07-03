@@ -64,26 +64,26 @@ tasks {
 
         repositories {
             maven {
-                if (project.hasProperty("snapshot")) {
-                    name = "snapshot"
-                    url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-                    // TODO switch name to ossrh and skip credentials with
-                    // credentials(PasswordCredentials::class)
-                    credentials {
-                        username = findProperty("ossrhUsername").toString()
-                        password = findProperty("ossrhPassword").toString()
-                    }
-                } else if (project.hasProperty("staging")) {
-                    name = "staging"
-                    url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                    credentials {
-                        username = findProperty("ossrhUsername").toString()
-                        password = findProperty("ossrhPassword").toString()
-                    }
-                } else {
+//                if (project.hasProperty("snapshot")) {
+//                    name = "snapshot"
+//                    url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+//                    // TODO switch name to ossrh and skip credentials with
+//                    // credentials(PasswordCredentials::class)
+//                    credentials {
+//                        username = findProperty("ossrhUsername").toString()
+//                        password = findProperty("ossrhPassword").toString()
+//                    }
+//                } else if (project.hasProperty("staging")) {
+//                    name = "staging"
+//                    url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+//                    credentials {
+//                        username = findProperty("ossrhUsername").toString()
+//                        password = findProperty("ossrhPassword").toString()
+//                    }
+//                } else {
                     name = "local"
                     url = uri("build/repo")
-                }
+//                }
             }
         }
     }

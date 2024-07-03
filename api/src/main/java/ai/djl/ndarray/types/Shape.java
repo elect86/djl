@@ -140,6 +140,11 @@ public class Shape {
         return shape[dimension];
     }
 
+    // Kotlin
+    public Shape get(int beginIndex, int endIndex) {
+        return slice(beginIndex, endIndex);
+    }
+
     /**
      * Returns the last index.
      *

@@ -778,7 +778,7 @@ interface NDManager : AutoCloseable {
      * @param stop the end of the interval. The interval does not include this value
      * @return a new instance of [NDArray]
      */
-    fun arange(stop: Int): NDArray = arange(0, stop, 1, DataType.INT32)
+    infix fun arange(stop: Int): NDArray = arange(0, stop, 1, DataType.INT32)
 
     /**
      * Returns evenly spaced values starting from 0.
@@ -792,7 +792,7 @@ interface NDManager : AutoCloseable {
      * @param stop the end of the interval. The interval does not include this value
      * @return a new instance of [NDArray]
      */
-    fun arange(stop: Float): NDArray = arange(0.0f, stop, 1.0f, DataType.FLOAT32)
+    infix fun arange(stop: Float): NDArray = arange(0.0f, stop, 1.0f, DataType.FLOAT32)
 
     /**
      * Returns evenly spaced values within a given interval with step 1.
@@ -1587,9 +1587,9 @@ interface NDManager : AutoCloseable {
          */
         @JvmStatic
         fun newBaseManager(): NDManager {
-            if (Engine.getAllEngines().isEmpty())
+            if (Engine.allEngines.isEmpty())
                 return PassthroughNDManager.INSTANCE
-            return Engine.getInstance().newBaseManager()
+            return Engine.instance.newBaseManager()
         }
 
         /**
@@ -1599,7 +1599,7 @@ interface NDManager : AutoCloseable {
          * @return a new top-level `NDManager`
          */
         @JvmStatic
-        fun newBaseManager(device: Device?): NDManager = Engine.getInstance().newBaseManager(device)
+        fun newBaseManager(device: Device): NDManager = Engine.instance.newBaseManager(device)
 
         /**
          * Creates a new top-level `NDManager` with specified engine.
@@ -1608,7 +1608,7 @@ interface NDManager : AutoCloseable {
          * @return a new top-level `NDManager`
          */
         @JvmStatic
-        fun newBaseManager(engineName: String?): NDManager = Engine.getEngine(engineName).newBaseManager()
+        fun newBaseManager(engineName: String): NDManager = Engine.getEngine(engineName).newBaseManager()
 
         /**
          * Creates a new top-level `NDManager` with specified [Device] and engine.
@@ -1618,8 +1618,7 @@ interface NDManager : AutoCloseable {
          * @return a new top-level `NDManager`
          */
         @JvmStatic
-        fun newBaseManager(device: Device?, engineName: String?): NDManager =
-            Engine.getEngine(engineName).newBaseManager(device)
+        fun newBaseManager(device: Device, engineName: String): NDManager = Engine.getEngine(engineName).newBaseManager(device)
 
         /**
          * Creates a new manager based on the given resource.
